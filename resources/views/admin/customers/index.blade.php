@@ -5,9 +5,6 @@
     <li class="nav-item">
         <a class="nav-link active" data-bs-toggle="tab" href="#customersTab">Customers</a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="tab" href="#groupsTab">Groups</a>
-    </li>
 </ul>
 
 <div class="tab-content mt-3">
@@ -26,14 +23,6 @@
                 <div class="card-body">
                     <!-- Filters Row -->
                     <div class="row g-3 mb-3">
-                        <div class="col-md-3">
-                            <select id="filterGroup" class="form-select form-select-sm shadow-sm">
-                                <option value="">All Groups</option>
-                                @foreach($groups as $group)
-                                    <option value="{{ $group->id }}">{{ $group->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
                         <div class="col-md-3">
                             <select id="filterStatus" class="form-select form-select-sm shadow-sm">
                                 <option value="">All Status</option>
@@ -68,31 +57,10 @@
             </div>
         </div>
     </div>
-
-    <div class="tab-pane fade" id="groupsTab">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <h5>Groups List</h5>
-            <button class="btn btn-success btn-sm" onclick="openGroupForm()">Add Group</button>
-        </div>
-        <table class="table table-bordered table-striped" id="groupsTable">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Created At</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
 </div>
 @endsection
 
-@push('scripts')
-<!-- Bootstrap Icons -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-
-
+@push('custom-scripts')
 <script>
     $(document).ready(function() {
         // Initialize Select2

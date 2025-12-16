@@ -12,8 +12,7 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        $groups = CustomerGroup::orderBy('name')->get();
-        return view('admin.customers.index', compact('groups'));
+        return view('admin.customers.index');
     }
 
     public function list(Request $request)
@@ -87,9 +86,8 @@ class CustomerController extends Controller
     
     public function form(Request $request)
     {
-        $groups = CustomerGroup::all();
         $customer = $request->customerId ? Customer::findOrFail($request->customerId) : null;
-        return view('admin.customers.partials.add-edit-form', compact('customer', 'groups'));
+        return view('admin.customers.partials.add-edit-form', compact('customer'));
     }
 
     public function save(Request $request)
@@ -164,45 +162,5 @@ class CustomerController extends Controller
     {
         $customer = Customer::findOrFail($request->custId);
         return view('admin.customers.partials.view', compact('customer'));
-    }
-    
-    public function groupList()
-    {
-        $groups = CustomerGroup::orderBy('name')->get();
-        return response()->json($groups);
-    }
-    
-    public function groupForm(Request $request)
-    {
-        $group = null;
-        if ($request->id) {
-            $group = CustomerGroup::find($request->id);
-        }
-        return view('admin.customers.groups.add-edit-form', compact('group'));
-    }
-
-    public function groupSave(Request $request)
-    {
-        // dd($request->all());
-        $request->validate([
-            'name' => 'required|string|max:255|unique:customer_groups,name,' . $request->id,
-        ]);
-
-        $group = CustomerGroup::updateOrCreate(
-            ['id' => $request->id],
-            ['name' => $request->name]
-        );
-
-        return response()->json([
-            'code' => 200,
-            'success' => true,
-            'message' => 'Group saved successfully.'
-        ]);
-    }
-
-    public function groupDelete(Request $request)
-    {
-        CustomerGroup::findOrFail($request->groupId)->delete();
-        return response()->json(['success' => true, 'message' => 'Group deleted successfully.']);
     }
 }

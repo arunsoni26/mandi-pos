@@ -14,28 +14,28 @@
 
             <div class="cart-panel border rounded p-2 mt-3 mb-3 table-responsive" id="cartItems">
                 <table class="table table-bordered table-sm align-middle text-center">
-                <thead class="table-light">
-                    <tr>
-                    <th>Product</th>
-                    <th>Pieces</th>
-                    <th>Weight (kg)</th>
-                    <th>Rate</th>
-                    <th>Total</th>
-                    <th>Customer</th>
-                    <th>Remove</th>
-                    </tr>
-                </thead>
-                <tbody id="cartTableBody">
-                    <tr>
-                    <td><input type="text" class="form-control input-sm cart-product" data-id="1" value=""></td>
-                    <td><input type="number" class="form-control input-sm cart-pieces" data-id="1" value=""></td>
-                    <td><input type="number" class="form-control input-sm cart-weight" data-id="1" value=""></td>
-                    <td><input type="number" class="form-control input-sm cart-rate" data-id="1" value=""></td>
-                    <td><input type="text" class="form-control input-sm cart-total item-total" data-id="1" readonly value=""></td>
-                    <td><input type="text" class="form-control input-sm cart-customer" data-id="1" value=""></td>
-                    <td><button class="btn btn-sm btn-danger" onclick="removeItem('1')">X</button></td>
-                    </tr>
-                </tbody>
+                    <thead class="table-light">
+                        <tr>
+                            <th>Product</th>
+                            <th>Pieces</th>
+                            <th>Weight (kg)</th>
+                            <th>Rate</th>
+                            <th>Total</th>
+                            <th>Customer</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cartTableBody">
+                        <tr>
+                            <td><input type="text" class="form-control input-sm cart-product" data-id="1" value=""></td>
+                            <td><input type="number" class="form-control input-sm cart-pieces" data-id="1" value=""></td>
+                            <td><input type="number" class="form-control input-sm cart-weight" data-id="1" value=""></td>
+                            <td><input type="number" class="form-control input-sm cart-rate" data-id="1" value=""></td>
+                            <td><input type="text" class="form-control input-sm cart-total item-total" data-id="1" readonly value=""></td>
+                            <td><input type="text" class="form-control input-sm cart-customer" data-id="1" value=""></td>
+                            <td><button class="btn btn-sm btn-danger" onclick="removeItem('1')">X</button></td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
 
@@ -92,19 +92,22 @@
 
 @push('custom-scripts')
 <script>
-    // Hook into existing cart update
-    const oldRenderCart = renderCart;
-    renderCart = function () {
-        oldRenderCart();
-    };
+    // // Hook into existing cart update
+    // const oldRenderCart = renderCart;
+    // renderCart = function () {
+    //     oldRenderCart();
+    // };
 
-    // --- PDF Download ---
-    document.getElementById('downloadPdf').addEventListener('click', () => {
-        const element = document.body;
-        const opt = { margin: 1, filename: 'invoice.pdf', html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4' } };
-        html2pdf().from(element).set(opt).save();
-    });
-
+    // // --- PDF Download ---
+    // document.getElementById('downloadPdf').addEventListener('click', () => {
+    //     const element = document.body;
+    //     const opt = { margin: 1, filename: 'invoice.pdf', html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4' } };
+    //     html2pdf().from(element).set(opt).save();
+    // });
+    
+    setTimeout(() => {
+        document.getElementById('sidebar-hide').click();
+    }, 100);
 </script>
 <script>
     function isPositive(val) {

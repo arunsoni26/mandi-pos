@@ -13,69 +13,45 @@
                     @if(in_array(auth()->user()->role->slug, ['superadmin', 'admin']))
                         <!-- active customers -->
                         <div class="col-sm-3">
-                            <div class="card">
+                            <div class="card bg-success dashnum-card text-white overflow-hidden">
+                                <span class="round small"></span>
+                                <span class="round big"></span>
                                 <div class="card-body">
-                                    <div class="row">
-                                        <div class="col mt-0">
-                                            <h5 class="card-title">Active Customers</h5>
-                                        </div>
-
-                                        <div class="col-auto">
-                                            <div class="stat text-success">
-                                                <i class="fas fa-user-tie"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <h1 class="mt-1 mb-3">{{ $customers->where('status', 1)->count() }}</h1>
-                                    <div class="mb-0">
-                                        <a href="{{ route('admin.customers.index') }}">View</a>
-                                    </div>
+                                    <span class="text-white d-block f-34 f-w-500 my-2">
+                                    {{ $customers->where('status', 1)->count() }}
+                                    <i class="fas fa-user-tie opacity-50"></i>
+                                    </span>
+                                    <p class="mb-0 opacity-50">Active Customers</p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- inactive customers -->
                         <div class="col-sm-3">
-                            <div class="card">
+                            <div class="card bg-warning dashnum-card text-white overflow-hidden">
+                                <span class="round small"></span>
+                                <span class="round big"></span>
                                 <div class="card-body">
-                                    <div class="row">
-                                        <div class="col mt-0">
-                                            <h5 class="card-title">In-active Customers</h5>
-                                        </div>
-
-                                        <div class="col-auto">
-                                            <div class="stat text-danger">
-                                                <i class="fas fa-user-tie"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <h1 class="mt-1 mb-3">{{ $customers->where('status', 0)->count() }}</h1>
-                                    <div class="mb-0">
-                                        <a href="{{ route('admin.customers.index') }}">View</a>
-                                    </div>
+                                    <span class="text-white d-block f-34 f-w-500 my-2">
+                                    {{ $customers->where('status', 0)->count() }}
+                                    <i class="fas fa-user-tie opacity-50"></i>
+                                    </span>
+                                    <p class="mb-0 opacity-50">In-active Customers</p>
                                 </div>
                             </div>
                         </div>
                     @endif
                     @if(in_array(auth()->user()->role->slug, ['superadmin']))
                         <div class="col-sm-3">
-                            <div class="card">
+                            <div class="card bg-primary-dark dashnum-card text-white overflow-hidden">
+                                <span class="round small"></span>
+                                <span class="round big"></span>
                                 <div class="card-body">
-                                    <div class="row">
-                                        <div class="col mt-0">
-                                            <h5 class="card-title">Users</h5>
-                                        </div>
-
-                                        <div class="col-auto">
-                                            <div class="stat text-primary">
-                                                <i class="fas fa-users"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <h1 class="mt-1 mb-3">{{ $users->where('status', 1)->count() }}</h1>
-                                    <div class="mb-0">
-                                        <a href="{{ route('admin.users.index') }}">View</a>
-                                    </div>
+                                    <span class="text-white d-block f-34 f-w-500 my-2">
+                                    {{ $users->where('status', 1)->count() }}
+                                    <i class="fas fa-user-tie opacity-50"></i>
+                                    </span>
+                                    <p class="mb-0 opacity-50">Users</p>
                                 </div>
                             </div>
                         </div>

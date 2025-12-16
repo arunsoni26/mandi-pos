@@ -3,8 +3,8 @@
         <div class="row">
             <div class="col-sm-6 my-1">
                 <p class="m-0">
-                    Berry &#9829; crafted by Team
-                    <a href="https://themeforest.net/user/codedthemes" target="_blank">CodedThemes</a>
+                    <img src="http://localhost/mandi-POS/public/assets/images/mandi-pos-logo-1.png" alt="" class="img-fluid footer-logo"> &#9829; crafted by Team
+                    <a href="https://themeforest.net/user/codedthemes" target="_blank">We-Next</a>
                 </p>
             </div>
             <div class="col-sm-6 ms-auto my-1">

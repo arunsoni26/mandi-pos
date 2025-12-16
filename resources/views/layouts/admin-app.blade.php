@@ -12,6 +12,7 @@
     <meta name="keywords"
         content="Bootstrap admin template, Dashboard UI Kit, Dashboard Template, Backend Panel, react dashboard, angular dashboard" />
     <meta name="author" content="codedthemes" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- [Favicon] icon -->
     <link rel="icon" href="{{ asset('assets') }}/images/favicon.svg" type="image/x-icon" />
@@ -31,6 +32,15 @@
     <!-- [Template CSS Files] -->
     <link rel="stylesheet" href="{{ asset('assets') }}/css/style.css" id="main-style-link" />
     <link rel="stylesheet" href="{{ asset('assets') }}/css/style-preset.css" />
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        .footer-logo {
+            max-height: 30px;   /* Adjust as needed */
+            width: auto;
+        }
+    </style>
     @stack('custom-css')
 </head>
 <!-- [Head] end -->
@@ -54,6 +64,13 @@
         <!-- [ Main Content ] end -->
       </div>
     </div>
+    
+    <div class="modal fade" id="editModal" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content" id="addEditContent">
+            </div>
+        </div>
+    </div>
     <!-- [ Main Content ] end -->
     @include('layouts.footer')
     <!-- Required Js -->
@@ -65,6 +82,7 @@
     <script src="{{ asset('assets') }}/js/theme.js"></script>
     <script src="{{ asset('assets') }}/js/plugins/feather.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/validator@13.11.0/validator.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
     <script>
