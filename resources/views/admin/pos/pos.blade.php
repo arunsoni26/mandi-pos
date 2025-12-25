@@ -11,6 +11,12 @@
                 <h5 class="card-title">Cart / Invoice Table</h5>
                 <span class="btn btn-primary ms-auto" onclick="addBlankRow();">Add</span>
             </div>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Select Creditor</label>
+                    <select name="creditor_id" id="creditorSelect" class="form-control"></select>
+                </div>
+            </div>
 
             <div class="cart-panel border rounded p-2 mt-3 mb-3 table-responsive" id="cartItems">
                 <table class="table table-bordered table-sm align-middle text-center">
@@ -26,15 +32,6 @@
                         </tr>
                     </thead>
                     <tbody id="cartTableBody">
-                        <tr>
-                            <td><input type="text" class="form-control input-sm cart-product" data-id="1" value=""></td>
-                            <td><input type="number" class="form-control input-sm cart-pieces" data-id="1" value=""></td>
-                            <td><input type="number" class="form-control input-sm cart-weight" data-id="1" value=""></td>
-                            <td><input type="number" class="form-control input-sm cart-rate" data-id="1" value=""></td>
-                            <td><input type="text" class="form-control input-sm cart-total item-total" data-id="1" readonly value=""></td>
-                            <td><input type="text" class="form-control input-sm cart-customer" data-id="1" value=""></td>
-                            <td><button class="btn btn-sm btn-danger" onclick="removeItem('1')">X</button></td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -51,7 +48,14 @@
                 <input id="cartGT" type="hidden">
                 </div>
 
-                <button id="generateInvoiceBtn" class="btn btn-primary">Generate Invoice</button>
+                <div class="d-flex gap-2">
+                    <button id="saveGenerateInvoiceBtn" class="btn btn-success flex-fill">
+                        Save & Generate Invoice
+                    </button>
+                    <button id="saveNextBtn" class="btn btn-primary flex-fill">
+                        Save & Next
+                    </button>
+                </div>
                 <button id="clearCartBtn" class="btn btn-outline-secondary">Clear Cart</button>
             </div>
             </div>
@@ -90,6 +94,20 @@
     <!-- INVOICE MODAL -->
 @endsection
 
+@push('custom-css')
+<style>
+    .select2-container .select2-selection--single {
+        height: 42px !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 42px !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 42px !important;
+    }
+</style>
+@endpush
+
 @push('custom-scripts')
 <script>
     // // Hook into existing cart update
@@ -108,6 +126,103 @@
     setTimeout(() => {
         document.getElementById('sidebar-hide').click();
     }, 100);
+    
+    $(document).ready(function () {
+        $('#creditorSelect').select2({
+            placeholder: 'Select or type creditor name',
+            tags: true,
+            ajax: {
+                url: '{{ route('admin.customers.creditors')}}',
+                dataType: 'json',
+                delay: 250,
+                data: params => ({ q: params.term }),
+                processResults: data => ({
+                    results: data.map(c => ({
+                        id: c.id,
+                        text: c.name
+                    }))
+                })
+            },
+            createTag: function (params) {
+                return {
+                    id: params.term,
+                    text: params.term,
+                    newTag: true
+                };
+            }
+        });
+
+        $('#creditorSelect').on('change', function () {
+            selectedCreditorId = $(this).val(); // id OR string
+        });
+
+        // $('.cart-debtor').select2({
+        //     placeholder: 'Select or type customer name',
+        //     tags: true,
+        //     ajax: {
+        //         url: '',
+        //         dataType: 'json',
+        //         delay: 250,
+        //         data: params => ({ q: params.term }),
+        //         processResults: data => ({
+        //             results: data.map(c => ({
+        //                 id: c.id,
+        //                 text: c.name
+        //             }))
+        //         })
+        //     },
+        //     createTag: function (params) {
+        //         return {
+        //             id: params.term,
+        //             text: params.term,
+        //             newTag: true
+        //         };
+        //     }
+        // }).on('change', function () {
+        //     const id = $(this).data('id');
+        //     cart[id].debtor_customer_id = $(this).val(); // id OR string
+        // });
+    });
+
+    window.initCustomerSelect2 = function(context = document) {
+        console.log('context====>>>', context);
+        
+        $(context).find('.cart-customer').each(function () {
+
+            // Prevent re-initialization
+            if ($(this).hasClass("select2-hidden-accessible")) return;
+
+            $(this).select2({
+                placeholder: 'Select / Add Customer',
+                width: '100%',
+                tags: true,
+                // allowClear: true,
+
+                ajax: {
+                    url: '{{ route('admin.customers.debtors')}}', // Laravel route
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            q: params.term,
+                            type: 'debtor' // or both if needed
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data.map(item => ({
+                                id: item.id,
+                                text: item.name
+                            }))
+                        };
+                    },
+                    cache: true
+                }
+            });
+
+        });
+    }
+
 </script>
 <script>
     function isPositive(val) {
@@ -248,46 +363,35 @@
 
     const fmt = v => '₹' + Number(v).toFixed(2);
 
+    function updateCart(rowId) {
+        const c = cart[rowId];
 
-    function addToCart(id) {
-        const p = PRODUCTS.find(x => x.id == id);
-        if (!cart[id]) {
-            cart[id] = {
-                product: p.name,
-                pieces: 1,
-                weight: 1,
-                rate: p.price,
-                customer: '',
-                total: p.price
-            };
-        } else {
-            cart[id].pieces++;
-            cart[id].total = cart[id].pieces * cart[id].rate;
+        const row = document.createElement('tr');
+        row.setAttribute('data-row-id', rowId);
+
+        row.innerHTML = `
+            <td><input class="form-control cart-product" data-id="${rowId}" value="${c.product || ''}"></td>
+            <td><input type="number" class="form-control cart-pieces" data-id="${rowId}" value="${c.pieces || ''}"></td>
+            <td><input type="number" class="form-control cart-weight" data-id="${rowId}" value="${c.weight || ''}"></td>
+            <td><input type="number" class="form-control cart-rate" data-id="${rowId}" value="${c.rate || ''}"></td>
+            <td><input class="form-control cart-total" readonly value="${c.total || 0}"></td>
+            <td>
+                <select class="form-control cart-customer" data-id="${rowId}" style="width:100%"></select>
+            </td>
+            <td><button class="btn btn-danger btn-sm" onclick="removeItem('${rowId}')">X</button></td>
+        `;
+
+        document.getElementById('cartTableBody').appendChild(row);
+
+        // 🔥 INIT SELECT2 ONLY FOR THIS ROW
+        initCustomerSelect2(row);
+
+        // 🔥 RESTORE VALUE IF EXISTS
+        if (c.customer) {
+            $(row).find('.customer-select')
+                .append(new Option(c.customer, c.customer, true, true))
+                .trigger('change');
         }
-        updateCart();
-    }
-
-    function updateCart() {
-        const body = document.getElementById('cartTableBody');
-        body.innerHTML = '';
-        let totalPieces = 0;
-
-        Object.keys(cart).forEach(id => {
-            const c = cart[id];
-            totalPieces += Number(c.pieces);
-
-            body.insertAdjacentHTML('beforeend', `
-        <tr data-row-id="${id}">
-            <td><input name="cart['product'][${id}]" type="text" class="form-control input-sm cart-product" data-id="${id}" value="${c.product || ''}"></td>
-            <td><input name="cart['piece'][${id}]" type="number" class="form-control input-sm cart-pieces" data-id="${id}" value="${c.pieces || ''}"></td>
-            <td><input name="cart['weight'][${id}]" type="number" class="form-control input-sm cart-weight" data-id="${id}" value="${c.weight || ''}"></td>
-            <td><input name="cart['rate'][${id}]" type="number" class="form-control input-sm cart-rate" data-id="${id}" value="${c.rate || ''}"></td>
-            <td><input name="cart['total'][${id}]" type="text" class="form-control input-sm cart-total item-total" data-id="${id}" readonly value="${c.total || 0}"></td>
-            <td><input name="cart['customer'][${id}]" type="text" class="form-control input-sm cart-customer" data-id="${id}" value="${c.customer || ''}"></td>
-            <td><button class="btn btn-sm btn-danger" onclick="removeItem('${id}')">X</button></td>
-        </tr>`);
-        });
-        document.getElementById('totalWage').value = fmt(totalPieces * WAGE_PER_PIECE);
 
         calculateGrandTotal();
     }
@@ -300,10 +404,10 @@
             weight: "",
             rate: "",
             total: 0,
-            customer: ""
+            debtor_customer_id: ""
         };
 
-        updateCart();
+        updateCart(rowId);
 
         // Put cursor in the new row's first cell
         setTimeout(() => {
@@ -358,7 +462,7 @@
                 weight: 0,
                 rate: 0,
                 total: 0,
-                customer: ""
+                debtor_customer_id: ""
             };
         }
 
@@ -387,33 +491,33 @@
 
     function removeItem(id) {
         delete cart[id];
-        updateCart();
+        // updateCart();
         rowId--;
     }
 
-    document.addEventListener('click', e => {
-        const card = e.target.closest('.product-card');
-        if (card) addToCart(card.dataset.id);
+    document.getElementById('clearCartBtn').addEventListener('click', () => {
+        cart = {};
+        document.getElementById('cartTableBody').innerHTML = '';
     });
-
-    document.getElementById('clearCartBtn').addEventListener('click', () => { cart = {}; updateCart(); });
 
 
     // INVOICE
-    document.getElementById('generateInvoiceBtn').addEventListener('click', () => {
+    document.getElementById('saveGenerateInvoiceBtn').addEventListener('click', () => {
         const body = document.getElementById('invItems'); body.innerHTML = '';
         let i = 1;
+        console.log('cart--->>>', cart);
         Object.values(cart).forEach(c => {
             body.insertAdjacentHTML('beforeend', `
-        <tr>
-            <td>${i++}</td>
-            <td>${c.product}</td>
-            <td>${c.pieces}</td>
-            <td>${c.weight}</td>
-            <td>${fmt(c.rate)}</td>
-            <td>${fmt(c.total)}</td>
-            <td>${c.customer}</td>
-        </tr>`);
+                <tr>
+                    <td>${i++}</td>
+                    <td>${c.product}</td>
+                    <td>${c.pieces}</td>
+                    <td>${c.weight}</td>
+                    <td>${fmt(c.rate)}</td>
+                    <td>${fmt(c.total)}</td>
+                    <td>${c.customer}</td>
+                </tr>`
+            );
         });
 
         let totalPieces = Object.values(cart).reduce((s, c) => s + Number(c.pieces), 0);
@@ -474,6 +578,6 @@
         win.print();
     });
 
-    updateCart();
+    // updateCart();
 </script>
 @endpush

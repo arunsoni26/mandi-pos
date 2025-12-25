@@ -75,7 +75,7 @@ class RolePermissionController extends Controller
             'module' => 'required|unique:permissions,module',
         ]);
 
-        Permission::create([
+        Module::create([
             'module' => $request->module,
         ]);
 
@@ -101,7 +101,7 @@ class RolePermissionController extends Controller
     public function getPermissions($roleId)
     {
         $role = Role::findOrFail($roleId);
-        $modules = Permission::all();
+        $modules = Module::all();
 
         return response()->json([
             'role' => $role,

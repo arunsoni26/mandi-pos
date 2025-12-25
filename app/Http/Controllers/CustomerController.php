@@ -163,4 +163,21 @@ class CustomerController extends Controller
         $customer = Customer::findOrFail($request->custId);
         return view('admin.customers.partials.view', compact('customer'));
     }
+
+    public function creditors(Request $request)
+    {
+        return Customer::whereIn('customer_type', ['Active Creditor', 'Raw Creditor'])
+            ->where('name', 'like', "%{$request->q}%")
+            ->limit(20)
+            ->get(['id', 'name']);
+    }
+
+    public function debtors(Request $request)
+    {
+        return Customer::where('customer_type', 'Debtor')
+            ->where('name', 'like', "%{$request->q}%")
+            ->limit(20)
+            ->get(['id', 'name']);
+    }
+
 }

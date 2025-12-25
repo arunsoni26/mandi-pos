@@ -74,42 +74,16 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
                 Route::post('save', [CustomerController::class, 'save'])->name('save')->middleware('permission:customers,can_edit');
 
                 Route::any('/view', [CustomerController::class, 'view'])->name('view')->middleware('permission:customers,can_view');
+                
+                Route::get('/creditors', [CustomerController::class, 'creditors'])->name('creditors');
+                Route::get('/debtors', [CustomerController::class, 'debtors'])->name('debtors');
             });
-        });
-        
-        Route::group(['prefix' => 'customers/groups', 'as' => 'customers.groups.'], function () {
-            Route::get('list', [CustomerController::class, 'groupList'])->name('list');
-            // Customer group form load (Add / Edit)
-            Route::post('form', [CustomerController::class, 'groupForm'])->name('form');
-            
-            // Customer group save (Add / Edit)
-            Route::post('save', [CustomerController::class, 'groupSave'])->name('save');
-            Route::post('delete', [CustomerController::class, 'groupDelete'])->name('delete');
-        });
-
-        Route::group(['prefix' => 'customers/{customer}/docs', 'as' => 'customers.docs.'], function () {
-            Route::get('/', [CustomerDocumentController::class,'index'])->name('index'); // page
-            Route::any('/list', [CustomerDocumentController::class,'list'])->name('list'); // JSON
-    
-            // modal form (Add multiple docs for a GST year)
-            Route::post('/form', [CustomerDocumentController::class,'form'])->name('form');
-            Route::post('/save', [CustomerDocumentController::class,'save'])->name('save');
-    
-            // download / delete a single doc
-            Route::get('/download/{id}', [CustomerDocumentController::class,'download'])->name('download');
-            Route::delete('/delete/{id}', [CustomerDocumentController::class,'destroy'])->name('delete');
-        });
-    
-        // GST Years quick-manage
-        Route::group(['prefix' => 'gst-years', 'as' => 'gst_years.'], function () {
-            Route::get('/list', [GstYearController::class,'list'])->name('list');      // JSON for dropdown / table
-            Route::post('/save', [GstYearController::class,'save'])->name('save');     // add/edit
-            Route::delete('/{id}', [GstYearController::class,'destroy'])->name('delete');
         });
     
         // GST Years quick-manage
         Route::group(['prefix' => 'pos', 'as' => 'pos.'], function () {
             Route::get('/main', [POSController::class,'index'])->name('main');
+            Route::post('/invoice/store', [POSController::class, 'store'])->name('save');
         });
     });
     

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('name');
-            $table->enum('customer_type', ['Active Creditor', 'Raw Creditor', 'Debitor'])->default('Active Creditor');
+            $table->enum('customer_type', ['Active Creditor', 'Raw Creditor', 'Debtor'])->default('Active Creditor');
             $table->string('mobile_no')->nullable();
             $table->string('email')->nullable();
             $table->string('city')->nullable();
