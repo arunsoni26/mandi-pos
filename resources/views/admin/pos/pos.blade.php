@@ -491,8 +491,10 @@
 
     function removeItem(id) {
         delete cart[id];
-        // updateCart();
-        rowId--;
+        if (confirm('Are you sure you want to delete this cart item?')) {
+            $('tr[data-row-id="'+id+'"]').remove();
+        }
+        // rowId--;
     }
 
     document.getElementById('clearCartBtn').addEventListener('click', () => {
@@ -506,25 +508,40 @@
         const body = document.getElementById('invItems'); body.innerHTML = '';
         let i = 1;
         console.log('cart--->>>', cart);
-        Object.values(cart).forEach(c => {
-            body.insertAdjacentHTML('beforeend', `
-                <tr>
-                    <td>${i++}</td>
-                    <td>${c.product}</td>
-                    <td>${c.pieces}</td>
-                    <td>${c.weight}</td>
-                    <td>${fmt(c.rate)}</td>
-                    <td>${fmt(c.total)}</td>
-                    <td>${c.customer}</td>
-                </tr>`
-            );
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type: "post",
+            url: "{{route('admin.pos.save')}}",
+            data: {
+                cart: cart,
+                creditorId: $('#creditorSelect').val()
+            },
+            success: function (data) {
+                // $('#addEditContent').html(data);
+                // $('#editModal').modal('show');
+            }
         });
+        // Object.values(cart).forEach(c => {
+        //     body.insertAdjacentHTML('beforeend', `
+        //         <tr>
+        //             <td>${i++}</td>
+        //             <td>${c.product}</td>
+        //             <td>${c.pieces}</td>
+        //             <td>${c.weight}</td>
+        //             <td>${fmt(c.rate)}</td>
+        //             <td>${fmt(c.total)}</td>
+        //             <td>${c.customer}</td>
+        //         </tr>`
+        //     );
+        // });
 
-        let totalPieces = Object.values(cart).reduce((s, c) => s + Number(c.pieces), 0);
-        document.getElementById('invWage').textContent = fmt(totalPieces * WAGE_PER_PIECE);
-        document.getElementById('invCartGT').textContent = fmt(document.getElementById('cartGT').value);
+        // let totalPieces = Object.values(cart).reduce((s, c) => s + Number(c.pieces), 0);
+        // document.getElementById('invWage').textContent = fmt(totalPieces * WAGE_PER_PIECE);
+        // document.getElementById('invCartGT').textContent = fmt(document.getElementById('cartGT').value);
 
-        new bootstrap.Modal(document.getElementById('invoiceModal')).show();
+        // new bootstrap.Modal(document.getElementById('invoiceModal')).show();
     });
 
     // document.getElementById('printInvoiceBtn').addEventListener('click',()=>window.print());

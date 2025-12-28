@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class CreditorInvoice extends Model
 {
     protected $fillable = [
+        'creditor_id',
         'invoice_date',
         'total_amount',
         'total_wage',

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use DB;
 use Illuminate\Http\Request;
 use App\Models\CreditorInvoice;
@@ -34,84 +35,138 @@ class POSController extends Controller
 
     public function store(Request $request)
     {
+        dd($request->all());
         DB::transaction(function () use ($request) {
 
-            $cart = collect($request->cart);
             $today = now()->toDateString();
 
-            /* ===============================
-               DAILY CREDITOR INVOICE
-            =============================== */
-
-            $creditor = CreditorInvoice::firstOrCreate(
-                ['invoice_date' => $today],
-                ['total_amount' => 0, 'total_wage' => 0, 'grand_total' => 0]
+            /* -----------------------------
+            | 1️⃣ Resolve Creditor
+            |----------------------------- */
+            $creditor = Customer::firstOrCreate(
+                [
+                    'name' => $request->creditor_id,
+                    'customer_type' => "Raw Creditor" // Active / Raw
+                ],
+                ['status' => 'active']
             );
 
-            foreach ($cart as $row) {
-                CreditorInvoiceItem::create([
-                    'creditor_invoice_id' => $creditor->id,
-                    'product_name' => $row['product'],
-                    'pieces' => $row['pieces'],
-                    'weight' => $row['weight'],
-                    'rate' => $row['rate'],
-                    'total' => $row['total'],
-                    'customer_name' => $row['customer'],
-                ]);
-            }
+            /* -----------------------------
+            | 2️⃣ Creditor Daily Invoice
+            |----------------------------- */
+            $creditorInvoice = CreditorInvoice::firstOrCreate(
+                [
+                    'creditor_id' => $creditor->id,
+                    'invoice_date' => $today
+                ],
+                [
+                    'total_amount' => 0,
+                    'total_wage' => 0,
+                    'grand_total' => 0
+                ]
+            );
 
-            $cTotals = CreditorInvoiceItem::where('creditor_invoice_id', $creditor->id)
-                ->selectRaw('SUM(pieces) as pcs, SUM(total) as amount')
-                ->first();
+            $creditorTotal = 0;
+            $creditorPieces = 0;
 
-            $creditor->update([
-                'total_amount' => $cTotals->amount,
-                'total_wage' => $cTotals->pcs * env('WAGE_PER_PIECE'),
-                'grand_total' => $cTotals->amount + ($cTotals->pcs * env('WAGE_PER_PIECE')),
-            ]);
+            /* -----------------------------
+            | 3️⃣ Loop Cart Rows
+            |----------------------------- */
+            foreach ($request->cart as $row) {
 
-            /* ===============================
-               DAILY DEBTOR INVOICES
-            =============================== */
-
-            $groupedCustomers = $cart->groupBy('customer');
-
-            foreach ($groupedCustomers as $customer => $items) {
-
-                $debtor = DebtorInvoice::firstOrCreate(
-                    ['customer_name' => $customer, 'invoice_date' => $today],
-                    ['total_amount' => 0, 'total_wage' => 0, 'grand_total' => 0]
-                );
-
-                foreach ($items as $item) {
-                    DebtorInvoiceItem::create([
-                        'debtor_invoice_id' => $debtor->id,
-                        'product_name' => $item['product'],
-                        'pieces' => $item['pieces'],
-                        'weight' => $item['weight'],
-                        'rate' => $item['rate'],
-                        'total' => $item['total'],
-                    ]);
+                if (empty($row['product']) || empty($row['customer'])) {
+                    continue;
                 }
 
-                $dTotals = DebtorInvoiceItem::where('debtor_invoice_id', $debtor->id)
-                    ->selectRaw('SUM(pieces) as pcs, SUM(total) as amount')
-                    ->first();
+                /* -----------------------------
+                | 4️⃣ Resolve Debtor
+                |----------------------------- */
+                $debtor = Customer::firstOrCreate(
+                    [
+                        'name' => $row['customer'],
+                        'customer_type' => 'debtor'
+                    ],
+                    ['status' => 'active']
+                );
 
-                $debtor->update([
-                    'total_amount' => $dTotals->amount,
-                    'total_wage' => $dTotals->pcs * env('WAGE_PER_PIECE'),
-                    'grand_total' => $dTotals->amount + ($dTotals->pcs * env('WAGE_PER_PIECE')),
+                /* -----------------------------
+                | 5️⃣ Debtor Daily Invoice
+                |  (ONLY debtor + date)
+                |----------------------------- */
+                $debtorInvoice = DebtorInvoice::firstOrCreate(
+                    [
+                        'debtor_customer_id' => $debtor->id,
+                        'invoice_date' => $today
+                    ],
+                    [
+                        'total_amount' => 0,
+                        'total_wage' => 0,
+                        'grand_total' => 0
+                    ]
+                );
+
+                $pieces = (int) $row['piece'];
+                $rate   = (float) $row['rate'];
+                $total  = $pieces * $rate;
+                $wage   = $pieces * 9;
+
+                /* -----------------------------
+                | 6️⃣ Save Creditor Item
+                |----------------------------- */
+                CreditorInvoiceItem::create([
+                    'creditor_invoice_id' => $creditorInvoice->id,
+                    'product_name' => $row['product'],
+                    'pieces' => $pieces,
+                    'weight' => $row['weight'],
+                    'rate' => $rate,
+                    'total' => $total,
+                    'debtor_customer_id' => $debtor->id
                 ]);
+
+                /* -----------------------------
+                | 7️⃣ Save Debtor Item
+                |  (with creditor_id)
+                |----------------------------- */
+                DebtorInvoiceItem::create([
+                    'debtor_invoice_id' => $debtorInvoice->id,
+                    'creditor_id' => $creditor->id,
+                    'product_name' => $row['product'],
+                    'pieces' => $pieces,
+                    'weight' => $row['weight'],
+                    'rate' => $rate,
+                    'total' => $total
+                ]);
+
+                /* -----------------------------
+                | 8️⃣ Accumulate Totals
+                |----------------------------- */
+                $creditorTotal += $total;
+                $creditorPieces += $pieces;
+
+                $debtorInvoice->increment('total_amount', $total);
+                $debtorInvoice->increment('total_wage', $wage);
             }
+
+            /* -----------------------------
+            | 9️⃣ Final Totals
+            |----------------------------- */
+            $creditorInvoice->update([
+                'total_amount' => $creditorTotal,
+                'total_wage' => $creditorPieces * 9,
+                'grand_total' => $creditorTotal + ($creditorPieces * 9)
+            ]);
+
+            DebtorInvoice::where('invoice_date', $today)->each(function ($inv) {
+                $inv->update([
+                    'grand_total' => $inv->total_amount + $inv->total_wage
+                ]);
+            });
         });
 
-        return response()->json(
-            [
-                'code' => 200,
-                'status' => 'success',
-                'message' => 'Invoice Saved'
-            ]
-        );
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Invoices saved successfully'
+        ]);
     }
+
 }

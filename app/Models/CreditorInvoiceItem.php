@@ -13,7 +13,7 @@ class CreditorInvoiceItem extends Model
         'weight',
         'rate',
         'total',
-        'customer_name',
+        'debtor_customer_id',
         'status',
         'updated_by',
     ];
