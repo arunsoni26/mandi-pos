@@ -374,7 +374,7 @@
             <td><input type="number" class="form-control cart-pieces" data-id="${rowId}" value="${c.pieces || ''}"></td>
             <td><input type="number" class="form-control cart-weight" data-id="${rowId}" value="${c.weight || ''}"></td>
             <td><input type="number" class="form-control cart-rate" data-id="${rowId}" value="${c.rate || ''}"></td>
-            <td><input class="form-control cart-total" readonly value="${c.total || 0}"></td>
+            <td><input class="form-control cart-total" data-id="${rowId}" readonly value="${c.total || 0}"></td>
             <td>
                 <select class="form-control cart-customer" data-id="${rowId}" style="width:100%"></select>
             </td>

@@ -25,7 +25,10 @@ return new class extends Migration
             $table->foreignId('updated_by')->default(1)->constrained('users')->cascadeOnDelete();
             $table->softDeletes();
             $table->timestamps();
-            $table->unique(columns: ['creditor_id', 'invoice_date']);
+            $table->unique(columns: [
+                'creditor_id',
+                'invoice_date'
+            ]);
         });
     }
 

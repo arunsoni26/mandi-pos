@@ -31,9 +31,8 @@ return new class extends Migration
 
             $table->unique([
                 'debtor_customer_id',
-                'creditor_id',
                 'invoice_date'
-            ], 'debtor_creditor_day_unique');
+            ], 'debtor_day_unique');
         });
     }
 
