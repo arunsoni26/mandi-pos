@@ -23,4 +23,10 @@ class CreditorInvoiceItem extends Model
     {
         return $this->belongsTo(CreditorInvoice::class);
     }
+
+    // Line item → belongs to creditor invoice
+    public function debtorCustomer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
 }

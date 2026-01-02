@@ -84,6 +84,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::group(['prefix' => 'pos', 'as' => 'pos.'], function () {
             Route::get('/main', [POSController::class,'index'])->name('main');
             Route::post('/invoice/store', [POSController::class, 'store'])->name('save');
+            Route::get('/load-today-invoice/{creditor}',
+                [POSController::class, 'loadTodayInvoice']
+            )->name('loadTodayInvoice');
         });
     });
     

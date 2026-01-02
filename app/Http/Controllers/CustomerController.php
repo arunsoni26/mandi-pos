@@ -174,7 +174,7 @@ class CustomerController extends Controller
 
     public function debtors(Request $request)
     {
-        return Customer::where('customer_type', 'Debtor')
+        return Customer::where('customer_type', 'Debitor')
             ->where('name', 'like', "%{$request->q}%")
             ->limit(20)
             ->get(['id', 'name']);

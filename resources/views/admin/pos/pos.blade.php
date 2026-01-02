@@ -68,26 +68,98 @@
     <div class="modal fade" id="invoiceModal" tabindex="-1">
       <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Invoice</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body" id="cartInvoice">
-            <table class="table table-bordered table-sm text-center">
-              <thead class="table-light">
-                <tr>
-                  <th>#</th><th>Product</th><th>Pieces</th><th>Weight (kg)</th><th>Rate</th><th>Total</th><th>Customer</th>
-                </tr>
-              </thead>
-              <tbody id="invItems"></tbody>
-            </table>
-            <hr>
-            <h5>Total Wage: <span id="invWage"></span></h5>
-            <h4>Grand Total: <span id="invCartGT"></span></h4>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-secondary" id="printInvoiceBtn">Print</button>
-          </div>
+            <div class="modal-header">
+                <h5 class="modal-title">Invoice</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="cartInvoice">
+                <!-- Invoice Header -->
+                <div class="text-center mb-3">
+                    <h3 class="fw-bold">माँ कर्मा ट्रेडर्स</h3>
+                    <p class="mb-0">नई सब्जीमंडी, सारंगपुर जिला राजगढ़ (म.प्र.)</p>
+                    <p class="mb-0">आयुष साहू | 📞 6261451385, सावरिया पाटीदार | 📞 7067692263, अशोक साहू | 📞9826137177</p>
+                    <hr>
+
+                    <p><strong>ख़रीदी बिल</strong></p>
+                </div>
+
+                <!-- Creditor & Date Row -->
+                <div class="row mb-3">
+                    <div class="col-6">
+                    <h6 class="mb-0">
+                        <strong>नाम:</strong>
+                        <span id="invCreditor">John Doe</span>
+                    </h6>
+                    </div>
+                    <div class="col-6 text-end">
+                    <h6 class="mb-0">
+                        <strong>दिनांक:</strong>
+                        <span id="invDate">2025-12-30</span>
+                    </h6>
+                    </div>
+                </div>
+
+                <!-- Items Table -->
+                <table class="table table-bordered table-sm text-center align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>वस्तु</th>
+                        <th>बोरी/थैले</th>
+                        <th>वज़न (kg)</th>
+                        <th>मूल्य</th>
+                        <th>कुल</th>
+                        <th>ग्राहक</th>
+                    </tr>
+                    </thead>
+                    <tbody id="invItems">
+                    <tr>
+                        <td>1</td>
+                        <td>Wheat</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>₹1.00</td>
+                        <td>₹1.00</td>
+                        <td>Arun Soni</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Rice</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>₹1.00</td>
+                        <td>₹1.00</td>
+                        <td>Deepika Soni</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <!-- Totals Section -->
+                <div class="row justify-content-end mt-3">
+                    <div class="col-md-5">
+                    <table class="table table-bordered">
+                        <tr>
+                        <th class="text-end">कुल वेतन</th>
+                        <td class="text-end" id="invWage">₹18.00</td>
+                        </tr>
+                        <tr class="table-light">
+                        <th class="text-end fs-5">कुल योग</th>
+                        <td class="text-end fs-5 fw-bold" id="invCartGT">₹20.00</td>
+                        </tr>
+                    </table>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="text-center mt-4">
+                    <p class="mb-0"><em>आपके व्यवसाय के लिए धन्यवाद!</em></p>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="printInvoiceBtn">Print</button>
+            </div>
         </div>
       </div>
     </div>
@@ -154,73 +226,107 @@
 
         $('#creditorSelect').on('change', function () {
             selectedCreditorId = $(this).val(); // id OR string
+            onCreditorSelected(selectedCreditorId);
         });
-
-        // $('.cart-debtor').select2({
-        //     placeholder: 'Select or type customer name',
-        //     tags: true,
-        //     ajax: {
-        //         url: '',
-        //         dataType: 'json',
-        //         delay: 250,
-        //         data: params => ({ q: params.term }),
-        //         processResults: data => ({
-        //             results: data.map(c => ({
-        //                 id: c.id,
-        //                 text: c.name
-        //             }))
-        //         })
-        //     },
-        //     createTag: function (params) {
-        //         return {
-        //             id: params.term,
-        //             text: params.term,
-        //             newTag: true
-        //         };
-        //     }
-        // }).on('change', function () {
-        //     const id = $(this).data('id');
-        //     cart[id].debtor_customer_id = $(this).val(); // id OR string
-        // });
     });
 
-    window.initCustomerSelect2 = function(context = document) {
-        console.log('context====>>>', context);
-        
-        $(context).find('.cart-customer').each(function () {
+    function onCreditorSelected(creditorId) {
+        if (!creditorId) return;
 
-            // Prevent re-initialization
-            if ($(this).hasClass("select2-hidden-accessible")) return;
+        fetch(`{{ url('admin/pos/load-today-invoice')}}/${creditorId}`)
+            .then(res => res.json())
+            .then(res => {
+                resetCart();
 
-            $(this).select2({
-                placeholder: 'Select / Add Customer',
-                width: '100%',
-                tags: true,
-                // allowClear: true,
+                if (res.exists) {
+                    cart = res.cart;
+                    console.log('cart->>', cart);
+                    
 
-                ajax: {
-                    url: '{{ route('admin.customers.debtors')}}', // Laravel route
-                    dataType: 'json',
-                    delay: 250,
-                    data: function (params) {
-                        return {
-                            q: params.term,
-                            type: 'debtor' // or both if needed
-                        };
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data.map(item => ({
-                                id: item.id,
-                                text: item.name
-                            }))
-                        };
-                    },
-                    cache: true
+                    Object.keys(cart).forEach(id => {
+                        updateCart(id);
+                        rowId = parseInt(id)+1;
+                        restoreCustomer(id);
+                    });
+                } else {
+                    cart = {}; // fresh invoice
+                    addBlankRow();
                 }
-            });
 
+                calculateGrandTotal();
+            });
+    }
+    
+    function resetCart() {
+        cart = {};
+        document.getElementById('cartTableBody').innerHTML = '';
+    }
+
+    function restoreCustomer(id) {
+        const c = cart[id];
+        if (!c.debtor_customer_id) return;
+
+        const input = document.querySelector(
+            `.cart-customer[data-id="${id}"]`
+        );
+
+        if (!input || !input.tomselect) return;
+
+        input.tomselect.addOption({
+            id: c.debtor_customer_id,
+            name: c.debtor_customer_name
         });
+
+        input.tomselect.setValue(c.debtor_customer_id);
+    }
+
+
+    window.initDebtorTomSelect = function (input, id) {
+        if (input.tomselect) return;
+
+        const ts = new TomSelect(input, {
+            valueField: 'id',
+            labelField: 'name',
+            searchField: 'name',
+            create: true,
+            persist: false,
+            maxItems: 1,
+
+            load(query, callback) {
+                if (!query.length) return callback();
+
+                fetch(`{{ route('admin.customers.debtors') }}?type=debtor&q=${encodeURIComponent(query)}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network error');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        callback(data); // must be [{id, name}]
+                    })
+                    .catch(err => {
+                        console.error('TomSelect AJAX error:', err);
+                        callback([]);
+                    });
+            },
+
+            onChange(value) {
+                cart[id].debtor_customer_id = value;
+
+                const item = ts.options[value];
+                cart[id].debtor_customer_name = item?.name || value;
+            }
+        });
+
+        // Restore value if already set
+        if (cart[id].debtor_customer_id) {
+            ts.addOption({
+                id: cart[id].debtor_customer_id,
+                name: cart[id].debtor_customer_name
+            });
+            ts.setValue(cart[id].debtor_customer_id);
+        }
     }
 
 </script>
@@ -363,28 +469,29 @@
 
     const fmt = v => '₹' + Number(v).toFixed(2);
 
-    function updateCart(rowId) {
-        const c = cart[rowId];
+    function updateCart(id) {
+        const c = cart[id];
 
         const row = document.createElement('tr');
-        row.setAttribute('data-row-id', rowId);
+        row.setAttribute('data-row-id', id);
 
         row.innerHTML = `
-            <td><input class="form-control cart-product" data-id="${rowId}" value="${c.product || ''}"></td>
-            <td><input type="number" class="form-control cart-pieces" data-id="${rowId}" value="${c.pieces || ''}"></td>
-            <td><input type="number" class="form-control cart-weight" data-id="${rowId}" value="${c.weight || ''}"></td>
-            <td><input type="number" class="form-control cart-rate" data-id="${rowId}" value="${c.rate || ''}"></td>
-            <td><input class="form-control cart-total" data-id="${rowId}" readonly value="${c.total || 0}"></td>
+            <td><input class="form-control cart-product" data-id="${id}" value="${c.product || ''}"></td>
+            <td><input type="number" class="form-control cart-pieces" data-id="${id}" value="${c.pieces || ''}"></td>
+            <td><input type="number" class="form-control cart-weight" data-id="${id}" value="${c.weight || ''}"></td>
+            <td><input type="number" class="form-control cart-rate" data-id="${id}" value="${c.rate || ''}"></td>
+            <td><input class="form-control cart-total" data-id="${id}" readonly value="${c.total || 0}"></td>
             <td>
-                <select class="form-control cart-customer" data-id="${rowId}" style="width:100%"></select>
+                <input type="text" class="form-control input-sm cart-customer customer-select" data-id="${id}" placeholder="Search or type customer">
             </td>
-            <td><button class="btn btn-danger btn-sm" onclick="removeItem('${rowId}')">X</button></td>
+            <td><button class="btn btn-danger btn-sm" onclick="removeItem('${id}')">X</button></td>
         `;
 
         document.getElementById('cartTableBody').appendChild(row);
 
-        // 🔥 INIT SELECT2 ONLY FOR THIS ROW
-        initCustomerSelect2(row);
+        // 🔥 Init Tom Select ONLY for this row
+        const customerInput = row.querySelector('.cart-customer');
+        initDebtorTomSelect(customerInput, id);
 
         // 🔥 RESTORE VALUE IF EXISTS
         if (c.customer) {
@@ -404,7 +511,8 @@
             weight: "",
             rate: "",
             total: 0,
-            debtor_customer_id: ""
+            debtor_customer_id: "",
+            debtor_customer_name: ""
         };
 
         updateCart(rowId);
@@ -462,7 +570,8 @@
                 weight: 0,
                 rate: 0,
                 total: 0,
-                debtor_customer_id: ""
+                debtor_customer_id: "",
+                debtor_customer_name: ""
             };
         }
 
@@ -478,9 +587,11 @@
         if (e.target.classList.contains('cart-rate')) {
             cart[id].rate = Number(e.target.value);
         }
-        if (e.target.classList.contains('cart-customer')) {
-            cart[id].customer = e.target.value;
-        }
+        // if (e.target.classList.contains('cart-customer')) {
+        //     console.log('e.target.value---->>>>', e.target.value);
+            
+        //     cart[id].debtor_customer_id = e.target.value;
+        // }
 
         // 🔥 Update only this row total
         calculateRowTotal(id);
@@ -518,30 +629,46 @@
                 cart: cart,
                 creditorId: $('#creditorSelect').val()
             },
-            success: function (data) {
-                // $('#addEditContent').html(data);
-                // $('#editModal').modal('show');
+            success: function (res) {
+                
+                if (res.status !== 'success') return;
+
+                const body = document.getElementById('invItems');
+                body.innerHTML = '';
+
+                let i = 1;
+
+                // 🔥 Invoice Header
+                $('#invCreditor').text(res.invoice.summary.creditor_name);
+
+                $('#invDate').text(res.invoice.summary.invoice_date);
+
+                // 🔥 Invoice Items (DB VALUES)
+                res.invoice.items.forEach(item => {
+                    body.insertAdjacentHTML('beforeend', `
+                        <tr>
+                            <td>${i++}</td>
+                            <td>${item.product}</td>
+                            <td>${item.pieces}</td>
+                            <td>${item.weight}</td>
+                            <td>${fmt(item.rate)}</td>
+                            <td>${fmt(item.total)}</td>
+                            <td>${item.debtor_name}</td>
+                        </tr>
+                    `);
+                });
+
+                // 🔥 Totals (DB VALUES)
+                $('#invAmount').text(fmt(res.invoice.summary.total_amount));
+
+                $('#invWage').text(fmt(res.invoice.summary.total_wage));
+
+                $('#invCartGT').text(fmt(res.invoice.summary.grand_total));
+
+                // 🔥 Show Invoice Modal
+                new bootstrap.Modal($('#invoiceModal')).show();
             }
         });
-        // Object.values(cart).forEach(c => {
-        //     body.insertAdjacentHTML('beforeend', `
-        //         <tr>
-        //             <td>${i++}</td>
-        //             <td>${c.product}</td>
-        //             <td>${c.pieces}</td>
-        //             <td>${c.weight}</td>
-        //             <td>${fmt(c.rate)}</td>
-        //             <td>${fmt(c.total)}</td>
-        //             <td>${c.customer}</td>
-        //         </tr>`
-        //     );
-        // });
-
-        // let totalPieces = Object.values(cart).reduce((s, c) => s + Number(c.pieces), 0);
-        // document.getElementById('invWage').textContent = fmt(totalPieces * WAGE_PER_PIECE);
-        // document.getElementById('invCartGT').textContent = fmt(document.getElementById('cartGT').value);
-
-        // new bootstrap.Modal(document.getElementById('invoiceModal')).show();
     });
 
     // document.getElementById('printInvoiceBtn').addEventListener('click',()=>window.print());
@@ -552,6 +679,10 @@
             <html>
             <head>
                 <title>Invoice</title>
+                    
+                <!-- Bootstrap CSS -->
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
                 <style>
                     /* General print formatting */
                     body {
@@ -592,9 +723,9 @@
             </html>
         `);
         win.document.close();
-        win.print();
+        setTimeout(() => {
+            win.print();
+        }, 1000);
     });
-
-    // updateCart();
 </script>
 @endpush
