@@ -26,4 +26,14 @@ class DebtorInvoice extends Model
     {
         return $this->hasMany(DebtorInvoiceItem::class);
     }
+
+    public function debitor()
+    {
+        return $this->belongsTo(Customer::class, 'debtor_customer_id');
+    }
+
+    public function creditor()
+    {
+        return $this->belongsTo(Customer::class, 'creditor_id');
+    }
 }

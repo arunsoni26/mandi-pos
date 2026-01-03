@@ -11,6 +11,7 @@ use App\Http\Controllers\RolePermissionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DebtorInvoiceController;
 use App\Http\Controllers\POSController;
 
 Route::get('/', function () {
@@ -91,6 +92,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
             Route::get('/creditors/invoices', [CreditorInvoiceController::class, 'index'])->name('creditors.invoices');
             Route::get('/creditors/invoices/{invoice}/print', [CreditorInvoiceController::class, 'print'])->name('creditors.invoices.print');
+
+            Route::get('/debitors/invoices', [DebtorInvoiceController::class, 'index'])->name('debitors.invoices');
+            Route::get('/debitors/invoices/{invoice}/print', [DebtorInvoiceController::class, 'print'])->name('debitors.invoices.print');
+        
         });
     });
     
