@@ -43,3 +43,11 @@ if (!function_exists('canDo')) {
         return $rPerm ? (bool) $rPerm->{$ability} : false;
     }
 }
+
+if (!function_exists('invoiceNumber')) {
+    function invoiceNumber($invoice)
+    {
+        $year = \Carbon\Carbon::parse($invoice->invoice_date)->format('y');
+        return 'INV' . $year . str_pad($invoice->id, 4, '0', STR_PAD_LEFT);
+    }
+}

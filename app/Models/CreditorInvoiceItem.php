@@ -21,12 +21,12 @@ class CreditorInvoiceItem extends Model
     // Line item → belongs to creditor invoice
     public function creditorInvoice()
     {
-        return $this->belongsTo(CreditorInvoice::class);
+        return $this->belongsTo(CreditorInvoice::class, 'creditor_invoice_id');
     }
 
     // Line item → belongs to creditor invoice
     public function debtorCustomer()
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(Customer::class, 'debtor_customer_id');
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CreditorInvoiceController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerDocumentController;
 use App\Http\Controllers\FrontendController;
@@ -87,6 +88,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
             Route::get('/load-today-invoice/{creditor}',
                 [POSController::class, 'loadTodayInvoice']
             )->name('loadTodayInvoice');
+
+            Route::get('/creditors/invoices', [CreditorInvoiceController::class, 'index'])->name('creditors.invoices');
+            Route::get('/creditors/invoices/{invoice}/print', [CreditorInvoiceController::class, 'print'])->name('creditors.invoices.print');
         });
     });
     

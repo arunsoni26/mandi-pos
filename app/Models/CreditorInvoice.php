@@ -25,4 +25,9 @@ class CreditorInvoice extends Model
     {
         return $this->hasMany(CreditorInvoiceItem::class);
     }
+
+    public function creditor()
+    {
+        return $this->belongsTo(Customer::class, 'creditor_id');
+    }
 }
