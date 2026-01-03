@@ -126,15 +126,15 @@ margin-top:20px;
 				<div class="receipt-header receipt-header-mid">
 					<div class="col-xs-8 col-sm-8 col-md-8 text-left">
 						<div class="receipt-right">
-							<h5>{{ $invoice->creditor->name }} </h5>
-							<p><b>Mobile :</b> {{ $invoice->creditor->mobile ?? 'N/A' }}</p>
+							<h5>{{ $invoice->debitor->name }} </h5>
+							<p><b>Mobile :</b> {{ $invoice->debitor->mobile ?? 'N/A' }}</p>
 							<!-- <p><b>Email :</b> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="63001610170c0e061123040e020a0f4d000c0e">[email&nbsp;protected]</a></p>
 							<p><b>Address :</b> New York, USA</p> -->
 						</div>
 					</div>
 					<div class="col-xs-4 col-sm-4 col-md-4">
 						<div class="receipt-left" style="float:right;">
-                            <h3>{{ str_replace('INV', 'INVC', invoiceNumber($invoice)) }}</h3>
+                            <h3>{{ str_replace('INV', 'INVD', invoiceNumber($invoice)) }}</h3>
 						</div>
 					</div>
 				</div>
@@ -160,12 +160,12 @@ margin-top:20px;
                         @foreach($invoice->items as $i => $item)
                         <tr>
                             <td>{{ $i + 1 }}</td>
-                            <td>{{ $item->product_name ?? 'N/A'}}</td>
-                            <td>{{ $item->pieces ?? 'N/A'}}</td>
-                            <td>{{ $item->weight ?? 'N/A'}}</td>
+                            <td>{{ $item->product_name }}</td>
+                            <td>{{ $item->pieces }}</td>
+                            <td>{{ $item->weight }}</td>
                             <td>{{ number_format($item->rate, 2) }}</td>
                             <td>{{ number_format($item->total, 2) }}</td>
-                            <td>{{ optional($item->debtorCustomer)->name }}</td>
+                            <td>{{ optional($invoice->debitor)->name }}</td>
                             <td>{{ $item->invoice_status ?? '' }}Draft</td>
                         </tr>
                         @endforeach
