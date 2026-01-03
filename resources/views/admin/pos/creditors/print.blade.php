@@ -152,7 +152,7 @@ margin-top:20px;
                             <th>Weight</th>
                             <th>Rate</th>
                             <th>Total</th>
-                            <th>Debtor</th>
+                            <!-- <th>Debtor</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -164,7 +164,7 @@ margin-top:20px;
                             <td>{{ $item->weight }}</td>
                             <td>{{ number_format($item->rate, 2) }}</td>
                             <td>{{ number_format($item->total, 2) }}</td>
-                            <td>{{ optional($item->debtorCustomer)->name }}</td>
+                            <!-- <td>{{ optional($item->debtorCustomer)->name }}</td> -->
                         </tr>
                         @endforeach
                     </tbody>
