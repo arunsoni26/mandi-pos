@@ -427,9 +427,10 @@
         const item = cart[id];
 
         const pieces = Number(item.pieces) || 0;
+        const weight = Number(item.weight) || 0;
         const rate = Number(item.rate) || 0;
 
-        const total = pieces * rate;
+        const total = weight * rate;
         item.total = total;
 
         // Update row total (UI update)
@@ -451,7 +452,7 @@
         });
 
         const wage = totalPieces * WAGE_PER_PIECE;
-        const grandTotal = totalAmount + wage;
+        const grandTotal = totalAmount - wage;
 
         document.getElementById('totalWage').value = wage.toFixed(2);
         document.getElementById('grandTotal').innerText = grandTotal.toFixed(2);

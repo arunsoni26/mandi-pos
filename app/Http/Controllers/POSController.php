@@ -170,12 +170,12 @@ class POSController extends Controller
             $creditorInvoice->update([
                 'total_amount' => $creditorTotal,
                 'total_wage' => $creditorPieces * 9,
-                'grand_total' => $creditorTotal + ($creditorPieces * 9)
+                'grand_total' => $creditorTotal - ($creditorPieces * 9)
             ]);
 
             DebtorInvoice::where('invoice_date', $today)->each(function ($inv) {
                 $inv->update([
-                    'grand_total' => $inv->total_amount + $inv->total_wage
+                    'grand_total' => $inv->total_amount - $inv->total_wage
                 ]);
             });
                 
@@ -185,7 +185,7 @@ class POSController extends Controller
                 'invoice_date'  => $today,
                 'total_amount'  => $creditorTotal,
                 'total_wage'    => $creditorPieces * 9,
-                'grand_total'   => $creditorTotal + ($creditorPieces * 9)
+                'grand_total'   => $creditorTotal - ($creditorPieces * 9)
             ];
         });
 
