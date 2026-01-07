@@ -55,6 +55,28 @@
                         </a>
                     </li>
                 @endif
+                
+                @if(canDo('customers','can_add'))
+                    <li class="pc-item {{ request()->routeIs('admin.pos.creditors.invoices') ? 'active' : '' }}">
+                        <a class='pc-link' href='{{ route('admin.pos.creditors.invoices') }}'>
+                            <span class="pc-micon">
+                                <i class="fas fa-user-tie"></i>
+                            </span>
+                            <span class="align-middle">Creditor Invoices</span>
+                        </a>
+                    </li>
+                @endif
+                
+                @if(canDo('customers','can_add'))
+                    <li class="pc-item {{ request()->routeIs('admin.pos.debitors.invoices') ? 'active' : '' }}">
+                        <a class='pc-link' href='{{ route('admin.pos.debitors.invoices') }}'>
+                            <span class="pc-micon">
+                                <i class="fas fa-user-tie"></i>
+                            </span>
+                            <span class="align-middle">Debitor Invoices</span>
+                        </a>
+                    </li>
+                @endif
 
             </ul>
             <!-- <div class="pc-navbar-card bg-primary rounded">

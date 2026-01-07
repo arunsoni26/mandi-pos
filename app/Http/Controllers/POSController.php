@@ -39,18 +39,23 @@ class POSController extends Controller
         DB::transaction(function () use ($request, &$invoiceData) {
 
             $today = now()->format('Y-m-d');
+            $creditorType = $request->creditorType ?? 'Raw Creditor';
 
             /* 1️⃣ Resolve Creditor */
             if (is_numeric((string) $request->creditorId)) {
                 $creditor = Customer::where('id', (int) $request->creditorId)
-                    ->whereIn('customer_type', ['Active Creditor', 'Raw Creditor'])
                     ->firstOrFail();
             } else {
-                $creditor = Customer::create([
-                    'name' => trim($request->creditorId),
-                    'customer_type' => 'Raw Creditor',
-                    'status' => 1
-                ]);
+                $creditor = Customer::where('name', trim($request->creditorId))
+                        ->where('customer_type', $creditorType)
+                        ->first();
+                if (!$creditor) {
+                    $creditor = Customer::create([
+                        'name' => trim($request->creditorId),
+                        'customer_type' => $creditorType,
+                        'status' => 1
+                    ]);
+                }
             }
             // dd($creditor->id);
 
