@@ -6,58 +6,88 @@
         <!-- CART PANEL -->
         <div class="col-lg-12">
         <div class="card shadow-sm">
-            <div class="card-body">
-            <div class="w-100 d-flex align-items-center">
-                <h5 class="card-title">Cart / Invoice Table</h5>
-                <span class="btn btn-primary ms-auto" onclick="addBlankRow();">Add</span>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <label class="form-label fw-bold">Select Creditor</label>
-                    <select name="creditor_id" id="creditorSelect" class="form-control"></select>
-                </div>
-            </div>
+            <div class="card-body" id="creditorTypeBody">            
+                <div class="creditor-options">
+                    
+                    <label class="creditor-card">
+                        <input type="radio" name="creditorTypeOption" value="Active Creditor">
+                        <div class="card-content">
+                            <div class="icon">🏪</div>
+                            <div class="title">Active Creditor</div>
+                            <div class="subtitle">व्यापारी</div>
+                        </div>
+                    </label>
 
-            <div class="cart-panel border rounded p-2 mt-3 mb-3 table-responsive" id="cartItems">
-                <table class="table table-bordered table-sm align-middle text-center">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Product</th>
-                            <th>Pieces</th>
-                            <th>Weight (kg)</th>
-                            <th>Rate</th>
-                            <th>Total</th>
-                            <th>Customer</th>
-                            <th>Remove</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cartTableBody">
-                    </tbody>
-                </table>
-            </div>
+                    <label class="creditor-card">
+                        <input type="radio" name="creditorTypeOption" value="Raw Creditor">
+                        <div class="card-content">
+                            <div class="icon">🌾</div>
+                            <div class="title">Raw Creditor</div>
+                            <div class="subtitle">किसान</div>
+                        </div>
+                    </label>
 
-            <!-- WAGE SECTION -->
-            <div class="mb-3 p-2 border rounded bg-light w-50 ms-auto">
-                <label class="form-label fw-bold">Wage Charge (₹9 per piece)</label>
-                <input name="wage" id="totalWage" class="form-control" readonly>
-            </div>
-
-            <div class="d-grid gap-2">
-                <div class="mt-4 text-end">
-                <h4>Grand Total: ₹ <span id="grandTotal">0.00</span></h4>
-                <input id="cartGT" type="hidden">
                 </div>
 
-                <div class="d-flex gap-2">
-                    <button id="saveGenerateInvoiceBtn" class="btn btn-success flex-fill">
-                        Save & Generate Invoice
-                    </button>
-                    <button id="saveNextBtn" class="btn btn-primary flex-fill">
-                        Save & Next
-                    </button>
-                </div>
-                <button id="clearCartBtn" class="btn btn-outline-secondary">Clear Cart</button>
+                <!-- Hidden input -->
+                <input type="hidden" name="creditor_type" id="creditorType">
             </div>
+            <div class="card-body" id="posBody" style="display:none;">
+                
+                <button type="button" id="backToCreditorType" class="btn btn-secondary mb-3">
+                    ← Back
+                </button>
+                <div class="w-100 d-flex align-items-center">
+                    <h5 class="card-title">Cart / Invoice Table</h5>
+                    <span class="btn btn-primary ms-auto" onclick="addBlankRow();">Add</span>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Select Creditor</label>
+                        <select name="creditor_id" id="creditorSelect" class="form-control"></select>
+                    </div>
+                </div>
+
+                <div class="cart-panel border rounded p-2 mt-3 mb-3 table-responsive" id="cartItems">
+                    <table class="table table-bordered table-sm align-middle text-center">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Product</th>
+                                <th>Pieces</th>
+                                <th>Weight (kg)</th>
+                                <th>Rate</th>
+                                <th>Total</th>
+                                <th>Customer</th>
+                                <th>Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cartTableBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- WAGE SECTION -->
+                <div class="mb-3 p-2 border rounded bg-light w-50 ms-auto">
+                    <label class="form-label fw-bold">Wage Charge (₹9 per piece)</label>
+                    <input name="wage" id="totalWage" class="form-control" readonly>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <div class="mt-4 text-end">
+                    <h4>Grand Total: ₹ <span id="grandTotal">0.00</span></h4>
+                    <input id="cartGT" type="hidden">
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button id="saveGenerateInvoiceBtn" class="btn btn-success flex-fill">
+                            Save & Generate Invoice
+                        </button>
+                        <button id="saveNextBtn" class="btn btn-primary flex-fill">
+                            Save & Next
+                        </button>
+                    </div>
+                    <button id="clearCartBtn" class="btn btn-outline-secondary">Clear Cart</button>
+                </div>
             </div>
         </div>
         </div>
@@ -178,26 +208,113 @@
         height: 42px !important;
     }
 </style>
+
+
+<style>
+    .creditor-options {
+        display: flex;
+        gap: 20px;
+    }
+
+    .creditor-card {
+        flex: 1;
+        border: 2px solid #ddd;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        padding: 20px;
+        position: relative;
+    }
+
+    .creditor-card input {
+        display: none;
+    }
+
+    .creditor-card .icon {
+        font-size: 40px;
+        margin-bottom: 10px;
+    }
+
+    .creditor-card .title {
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .creditor-card .subtitle {
+        font-size: 14px;
+        color: #666;
+    }
+
+    /* Hover effect */
+    .creditor-card:hover {
+        border-color: #0d6efd;
+        transform: translateY(-3px);
+    }
+
+    /* Selected state */
+    .creditor-card input:checked + .card-content {
+        color: #0d6efd;
+    }
+
+    .creditor-card input:checked + .card-content::after {
+        content: "✔";
+        position: absolute;
+        top: 12px;
+        right: 15px;
+        font-size: 18px;
+        color: #0d6efd;
+    }
+
+    .creditor-card input:checked ~ .card-content,
+    .creditor-card input:checked + .card-content {
+        font-weight: 600;
+    }
+
+    .creditor-card input:checked {
+        display: none;
+    }
+
+    .creditor-card:has(input:checked) {
+        border-color: #0d6efd;
+        background: #f0f6ff;
+    }
+
+</style>
 @endpush
 
 @push('custom-scripts')
 <script>
-    // // Hook into existing cart update
-    // const oldRenderCart = renderCart;
-    // renderCart = function () {
-    //     oldRenderCart();
-    // };
+    $(document).ready(function () {
+        // When selecting creditor type
+        $('input[name="creditorTypeOption"]').on('change', function () {
+            // Set hidden input value
+            $('#creditorType').val($(this).val());
 
-    // // --- PDF Download ---
-    // document.getElementById('downloadPdf').addEventListener('click', () => {
-    //     const element = document.body;
-    //     const opt = { margin: 1, filename: 'invoice.pdf', html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4' } };
-    //     html2pdf().from(element).set(opt).save();
-    // });
+            // Hide creditor type body
+            $('#creditorTypeBody').slideUp();
+
+            // Show POS body
+            $('#posBody').slideDown();
+        });
+
+        // Back button click
+        $('#backToCreditorType').on('click', function () {
+            // Hide POS body
+            $('#posBody').slideUp();
+
+            // Show creditor type body
+            $('#creditorTypeBody').slideDown();
+
+            // Optional: clear selection
+            $('input[name="creditorTypeOption"]').prop('checked', false);
+            $('#creditorType').val('');
+        });
+    });
     
     setTimeout(() => {
         document.getElementById('sidebar-hide').click();
-    }, 100);
+    }, 200);
 
     window.openCustomerModal = function(cusId) {
         console.log('cusId--->>>>', cusId);
@@ -229,40 +346,65 @@
                 url: '{{ route('admin.customers.creditors') }}',
                 dataType: 'json',
                 delay: 250,
-                data: params => ({ q: params.term }),
+                data: function (params) {
+                    return {
+                        searchTerm: params.term,
+                        type: $('#creditorType').val()
+                    };
+                },
                 processResults: data => {
                     let results = data.creditors.map(c => ({
                         id: c.id,
-                        text: `<span style="width: 100%" type="button" class="" onClick='openCustomerModal(`+c.id+`)'>`+c.name+`</span>`
+                        text: c.name,        // PLAIN TEXT
+                        customer: c
                     }));
 
                     if (data.creditors.length === 0) {
                         results.push({
                             id: 'create_new',
-                            text: `<span style="width: 100%" type="button" class="" onClick='openCustomerModal()'>+ Add</span>`,
+                            text: 'Add new customer',
                             isNew: true
                         });
                     }
+
                     return { results };
                 }
             },
-            escapeMarkup: markup => markup
+
+            // 🔽 Dropdown appearance only
+            templateResult: function (data) {
+                if (data.loading) return data.text;
+
+                if (data.id === 'create_new') {
+                    return $('<div class="fw-bold">➕ Add new customer</div>');
+                }
+
+                return $(`
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>${data.text}</span>
+                        <span class="badge bg-secondary">View</span>
+                    </div>
+                `);
+            },
+
+            // ✅ Selected value (NO HTML)
+            templateSelection: function (data) {
+                return data.text || data.id;
+            }
         });
 
         $('#creditorSelect').on('select2:select', function (e) {
             let data = e.params.data;
-            console.log('data--->>>', data);
-            
 
             if (data.id === 'create_new') {
                 openCustomerModal();
-                $('#creditorSelect').val(null).trigger('change');
+                $(this).val(null).trigger('change');
             } else {
                 openCustomerModal(data.id);
             }
         });
     });
-    
+
 
     function onCreditorSelected(creditorId) {
         if (!creditorId) return;

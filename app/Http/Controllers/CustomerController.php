@@ -87,13 +87,18 @@ class CustomerController extends Controller
             }
 
             if ($request->hasFile('profile_pic')) {
+                $file     = $request->file('profile_pic');
+                $filename = now()->format('Ymd_His') . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
 
                 // Delete old image on update
-                if ($customer->profile_pic && Storage::disk('public')->exists($customer->profile_pic)) {
-                    Storage::disk('public')->delete($customer->profile_pic);
+                if (Storage::disk('s3')->exists("customers/{$customer->id}/profile_pics/".$filename)) {
+                    Storage::disk('s3')->delete("customers/{$customer->id}/profile_pics/".$filename);
                 }
 
-                $path = $request->file('profile_pic')->store('customers', 'public');
+                $path = $request->file('profile_pic')->storeAs(
+                    "customers/{$customer->id}/profile_pics/",
+                    $filename,
+                    's3');
                 $customer->profile_pic = $path;
             }
 
@@ -123,8 +128,9 @@ class CustomerController extends Controller
 
     public function creditors(Request $request)
     {
-        $creditors = Customer::whereIn('customer_type', ['Active Creditor', 'Raw Creditor'])
-            ->where('name', 'like', "%{$request->q}%")
+        // dd($request->all());
+        $creditors = Customer::where('customer_type', $request->type)
+            ->where('name', 'like', "%{$request->searchTerm}%")
             ->limit(20)
             ->get();
 
