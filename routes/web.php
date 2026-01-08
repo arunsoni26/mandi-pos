@@ -76,7 +76,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
                 Route::post('save', [CustomerController::class, 'save'])->name('save')->middleware('permission:customers,can_edit');
 
                 Route::any('/view', [CustomerController::class, 'view'])->name('view')->middleware('permission:customers,can_view');
-                
+
                 Route::get('/creditors', [CustomerController::class, 'creditors'])->name('creditors');
                 Route::get('/debtors', [CustomerController::class, 'debtors'])->name('debtors');
             });

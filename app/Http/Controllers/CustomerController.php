@@ -106,10 +106,17 @@ class CustomerController extends Controller
 
     public function creditors(Request $request)
     {
-        return Customer::whereIn('customer_type', ['Active Creditor', 'Raw Creditor'])
+        $creditors = Customer::whereIn('customer_type', ['Active Creditor', 'Raw Creditor'])
             ->where('name', 'like', "%{$request->q}%")
             ->limit(20)
-            ->get(['id', 'name']);
+            ->get();
+        
+        return response()->json([
+            'code' => 200,
+            'status' => 'success',
+            'msg' => 'creditors fetched successfully.',
+            'creditors' => $creditors
+        ]);
     }
 
     public function debtors(Request $request)
@@ -118,6 +125,13 @@ class CustomerController extends Controller
             ->where('name', 'like', "%{$request->q}%")
             ->limit(20)
             ->get(['id', 'name']);
+        
+        // return response()->json([
+        //     'code' => 200,
+        //     'status' => 'success',
+        //     'msg' => 'debtors fetched successfully.',
+        //     'debtors' => $debtors
+        // ]);
     }
 
 }

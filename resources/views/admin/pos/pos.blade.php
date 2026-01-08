@@ -198,37 +198,74 @@
     setTimeout(() => {
         document.getElementById('sidebar-hide').click();
     }, 100);
-    
+
+    window.openCustomerModal = function(cusId) {
+        console.log('cusId--->>>>', cusId);
+        
+        $('#creditorSelect').select2('close');
+        $.ajax({
+            type: 'post',
+            url: "{{route('admin.customers.form')}}",
+            data: {
+                customerId: cusId
+            },
+            headers:{
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(data) {
+                $('#addEditContent').html(data);
+                $('#editModal').modal('show');
+            },
+            error: function(err) {
+                console.log('err---->>>>', err);
+            }
+        });
+    }
+
     $(document).ready(function () {
         $('#creditorSelect').select2({
             placeholder: 'Select or type creditor name',
-            tags: true,
             ajax: {
-                url: '{{ route('admin.customers.creditors')}}',
+                url: '{{ route('admin.customers.creditors') }}',
                 dataType: 'json',
                 delay: 250,
                 data: params => ({ q: params.term }),
-                processResults: data => ({
-                    results: data.map(c => ({
+                processResults: data => {
+                    let results = data.creditors.map(c => ({
                         id: c.id,
-                        text: c.name
-                    }))
-                })
+                        text: `<span style="width: 100%" type="button" class="" onClick='openCustomerModal(`+c.id+`)'>`+c.name+`</span>`
+                    }));
+
+                    if (data.creditors.length === 0) {
+                        results.push({
+                            id: 'create_new',
+                            text: `<span style="width: 100%" type="button" class="" onClick='openCustomerModal()'>+ Add New Purpose</span>`,
+                            isNew: true
+                        });
+                    }
+                    console.log('results---->>>>', results);
+                    
+
+                    return { results };
+                }
             },
-            createTag: function (params) {
-                return {
-                    id: params.term,
-                    text: params.term,
-                    newTag: true
-                };
-            }
+            escapeMarkup: markup => markup
         });
 
-        $('#creditorSelect').on('change', function () {
-            selectedCreditorId = $(this).val(); // id OR string
-            onCreditorSelected(selectedCreditorId);
+        $('#creditorSelect').on('select2:select', function (e) {
+            let data = e.params.data;
+            console.log('data--->>>', data);
+            
+
+            if (data.id === 'create_new') {
+                openCustomerModal();
+                $('#creditorSelect').val(null).trigger('change');
+            } else {
+                openCustomerModal(data.id);
+            }
         });
     });
+    
 
     function onCreditorSelected(creditorId) {
         if (!creditorId) return;
