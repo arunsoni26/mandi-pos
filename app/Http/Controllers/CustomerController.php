@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use App\Models\CustomerGroup;
 use App\Models\User;
-use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class CustomerController extends Controller
 {
@@ -32,13 +33,13 @@ class CustomerController extends Controller
                 'name' => $row->name,
                 'email' => $row->email,
                 'mobile' => $row->mobile,
-                
+
                 'status_toggle' => '
                     <div class="form-check form-switch">
                         <input 
                             type="checkbox"
                             class="form-check-input toggle-status"
-                            data-id="'.$row->id.'" '.($row->status ? 'checked' : '').'>
+                            data-id="' . $row->id . '" ' . ($row->status ? 'checked' : '') . '>
                     </div>
                 ',
                 'actions' => view('admin.customers.partials.actions', compact('row'))->render()
@@ -55,7 +56,7 @@ class CustomerController extends Controller
         $customer->save();
         return response()->json(['success' => true]);
     }
-    
+
     public function form(Request $request)
     {
         $customer = $request->customerId ? Customer::findOrFail($request->customerId) : null;
@@ -66,9 +67,12 @@ class CustomerController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255|unique:users,email,' . $request->user_id,
-            'mobile' => 'required|number|max:255',
-            'password' => $request->id ? 'nullable|min:6|confirmed' : 'required|min:6|confirmed',
+            // 'email' => 'nullable|email|max:255|unique:users,email,' . $request->user_id,
+            'mobile' => 'required|numeric|digits_between:10,15',
+            'pan' => 'nullable',
+            'address' => 'nullable',
+            // 'password' => $request->id ? 'nullable|min:6|confirmed' : 'required|min:6|confirmed',
+            'profile_pic' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         DB::beginTransaction();
@@ -81,8 +85,21 @@ class CustomerController extends Controller
                 $customer = new Customer();
             }
 
+            if ($request->hasFile('profile_pic')) {
+
+                // Delete old image on update
+                if ($customer->profile_pic && Storage::disk('public')->exists($customer->profile_pic)) {
+                    Storage::disk('public')->delete($customer->profile_pic);
+                }
+
+                $path = $request->file('profile_pic')->store('customers', 'public');
+                $customer->profile_pic = $path;
+            }
+
+
             $customer->name = $request->name;
-            $customer->email = $request->email;
+            $customer->pan = $request->pan;
+            $customer->address = $request->address;
             $customer->mobile = $request->mobile;
             $customer->customer_type = "Active Creditor";
             $customer->updated_by = auth()->id();
@@ -91,13 +108,12 @@ class CustomerController extends Controller
             DB::commit();
 
             return response()->json(['success' => true, 'message' => 'Customer saved successfully.']);
-
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
-    
+
     public function view(Request $request)
     {
         $customer = Customer::findOrFail($request->custId);
@@ -110,7 +126,7 @@ class CustomerController extends Controller
             ->where('name', 'like', "%{$request->q}%")
             ->limit(20)
             ->get();
-        
+
         return response()->json([
             'code' => 200,
             'status' => 'success',
@@ -125,7 +141,7 @@ class CustomerController extends Controller
             ->where('name', 'like', "%{$request->q}%")
             ->limit(20)
             ->get(['id', 'name']);
-        
+
         // return response()->json([
         //     'code' => 200,
         //     'status' => 'success',
@@ -133,5 +149,4 @@ class CustomerController extends Controller
         //     'debtors' => $debtors
         // ]);
     }
-
 }
