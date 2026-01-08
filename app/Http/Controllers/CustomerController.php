@@ -18,7 +18,7 @@ class CustomerController extends Controller
 
     public function list(Request $request)
     {
-        $query = Customer::select('id', 'name', 'email', 'mobile', 'status', 'hide_dashboard');
+        $query = Customer::select('id', 'name', 'mobile', 'pan', 'address', 'status', 'hide_dashboard');
 
         // Filters
         if ($request->status !== null && $request->status !== '') {
@@ -31,8 +31,9 @@ class CustomerController extends Controller
         $data = $customers->map(function ($row) {
             return [
                 'name' => $row->name,
-                'email' => $row->email,
                 'mobile' => $row->mobile,
+                'pan' => $row->pan,
+                'address' => $row->address,
 
                 'status_toggle' => '
                     <div class="form-check form-switch">

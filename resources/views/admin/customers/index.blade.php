@@ -38,10 +38,10 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Name</th>
-                                    <th>Email</th>
                                     <th>Mobile</th>
+                                    <th>PAN</th>
+                                    <th>Address</th>
                                     <th>Status</th>
-                                    <!-- <th>Dashboard</th> -->
                                     <th class="text-center">Actions</th>
                                 </tr>
                             </thead>
@@ -102,8 +102,9 @@
                 },
                 columns: [
                     { data: 'name' },
-                    { data: 'email' },
                     { data: 'mobile' },
+                    { data: 'pan' },
+                    { data: 'address' },
                     { data: 'status_toggle', orderable: false, searchable: false },
                     { data: 'actions', orderable: false, searchable: false, className: 'text-center' }
                 ]

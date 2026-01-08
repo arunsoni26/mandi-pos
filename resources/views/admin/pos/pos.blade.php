@@ -239,13 +239,10 @@
                     if (data.creditors.length === 0) {
                         results.push({
                             id: 'create_new',
-                            text: `<span style="width: 100%" type="button" class="" onClick='openCustomerModal()'>+ Add New Purpose</span>`,
+                            text: `<span style="width: 100%" type="button" class="" onClick='openCustomerModal()'>+ Add</span>`,
                             isNew: true
                         });
                     }
-                    console.log('results---->>>>', results);
-                    
-
                     return { results };
                 }
             },
