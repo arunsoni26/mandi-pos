@@ -61,8 +61,10 @@ class CustomerController extends Controller
 
     public function form(Request $request)
     {
+        $isPOS = $request->isPOS ?? false;
         $customer = $request->customerId ? Customer::findOrFail($request->customerId) : null;
-        return view('admin.customers.partials.add-edit-form', compact('customer'));
+        $customerType = $request->customerType;
+        return view('admin.customers.partials.add-edit-form', compact('customer', 'customerType', 'isPOS'));
     }
 
     public function save(Request $request)
@@ -92,14 +94,14 @@ class CustomerController extends Controller
                 $filename = now()->format('Ymd_His') . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
 
                 // Delete old image on update
-                if (Storage::disk('s3')->exists("customers/{$customer->id}/profile_pics/".$filename)) {
-                    Storage::disk('s3')->delete("customers/{$customer->id}/profile_pics/".$filename);
+                if (Storage::disk('public')->exists("customers/{$customer->id}/profile_pics/".$filename)) {
+                    Storage::disk('public')->delete("customers/{$customer->id}/profile_pics/".$filename);
                 }
 
                 $path = $request->file('profile_pic')->storeAs(
                     "customers/{$customer->id}/profile_pics/",
                     $filename,
-                    's3');
+                    'public');
                 $customer->profile_pic = $path;
             }
 
@@ -108,13 +110,20 @@ class CustomerController extends Controller
             $customer->pan = $request->pan;
             $customer->address = $request->address;
             $customer->mobile = $request->mobile;
-            $customer->customer_type = "Active Creditor";
+            $customer->customer_type = $request->customer_type ?? "Active Creditor";
             $customer->updated_by = auth()->id();
             $customer->save();
 
             DB::commit();
 
-            return response()->json(['success' => true, 'message' => 'Customer saved successfully.']);
+            return response()->json(
+            [
+                    'code' => 200,
+                    'success' => true,
+                    'message' => 'Saved successfully.',
+                    'customer' => $customer
+                ]
+            );
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
