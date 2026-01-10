@@ -10,6 +10,9 @@
     @if(!empty($customer))
         <input type="hidden" name="id" value="{{ $customer->id }}">
     @endif
+    @if(!empty($customerType))
+        <input type="hidden" name="customer_type" value="{{ $customerType }}">
+    @endif
 
     <div class="modal-body">
         <div class="row g-3">
@@ -42,13 +45,20 @@
             </div>
 
             {{-- Profile Pic --}}
-            <div class="col-md-3">
-                <label class="form-label">Profile Pic</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                    <input type="file" name="profile_pic" class="form-control" value="{{ $customer->profile_pic ?? '' }}" required>
+            @if (isset($customer->profile_pic) && !empty($customer->profile_pic))
+                <div class="col-md-3">
+                    <label class="form-label">Profile Pic</label>
+                    <img src="" alt="user-image" class="user-avtar">
                 </div>
-            </div>
+            @else
+                <div class="col-md-3">
+                    <label class="form-label">Profile Pic</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                        <input type="file" name="profile_pic" class="form-control" value="{{ $customer->profile_pic ?? '' }}" required>
+                    </div>
+                </div>
+            @endif
 
             {{-- Address --}}
             <div class="col-12">
@@ -106,10 +116,20 @@
                     success: function (data) {
                         console.log('user_data----->>>', data);
                         if (data.code == 200) {
-                            toastr.success(data.msg);
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 1000);
+                            toastr.success(data.message);
+                            @if (!isset($isPOS) && !$isPOS)
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 1000);
+                            @else
+                                // Hide Select2 section
+                                $('#creditorSelectionSection').hide();
+
+                                // Show selected creditor
+                                showSelectedCreditor(data.customer);
+
+                                onCreditorSelected(data.customer.id);
+                            @endif
                         } else {
                             toastr.error(data.msg);
                             submitButton.disabled = false;

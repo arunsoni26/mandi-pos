@@ -1,5 +1,9 @@
 @extends('layouts.admin-app')
 
+@php
+    $isPOS = true;
+@endphp
+
 @section('content')
 
     <div class="row">
@@ -33,19 +37,28 @@
                 <input type="hidden" name="creditor_type" id="creditorType">
             </div>
             <div class="card-body" id="posBody" style="display:none;">
+                <div class="d-flex align-items-center position-relative mb-4">
+                    <button type="button" id="backToCreditorType" class="btn btn-secondary mb-3 z-2">
+                        ← Back
+                    </button>
+    
+                    <!-- Selected creditor type -->
+                    <div id="selectedCreditorType" class="fw-bold position-absolute start-50 translate-middle-x text-center w-100">
+                        <span class="badge bg-info fs-3"></span>
+                    </div>
+                </div>
                 
-                <button type="button" id="backToCreditorType" class="btn btn-secondary mb-3">
-                    ← Back
-                </button>
                 <div class="w-100 d-flex align-items-center">
                     <h5 class="card-title">Cart / Invoice Table</h5>
                     <span class="btn btn-primary ms-auto" onclick="addBlankRow();">Add</span>
                 </div>
-                <div class="row mb-3">
+                <div class="row mb-3" id="creditorSelectionSection">
                     <div class="col-md-4">
                         <label class="form-label fw-bold">Select Creditor</label>
                         <select name="creditor_id" id="creditorSelect" class="form-control"></select>
                     </div>
+                </div>
+                <div class="row mb-3" id="creditorSelectedSection">
                 </div>
 
                 <div class="cart-panel border rounded p-2 mt-3 mb-3 table-responsive" id="cartItems">
@@ -198,6 +211,9 @@
 
 @push('custom-css')
 <style>
+    .select2-container {
+        width: -webkit-fill-available !important;
+    }
     .select2-container .select2-selection--single {
         height: 42px !important;
     }
@@ -288,8 +304,19 @@
     $(document).ready(function () {
         // When selecting creditor type
         $('input[name="creditorTypeOption"]').on('change', function () {
+            let selectedTitle = $(this).closest('.creditor-card')
+                                       .find('.title')
+                                       .text();
+            let icon = $(this).closest('.creditor-card').find('.icon').text();
+
             // Set hidden input value
             $('#creditorType').val($(this).val());
+
+            // Show selected option text
+            $('#selectedCreditorType span').html(icon + ' ' + selectedTitle);
+
+            // 🔥 RESET Select2 when type changes
+            resetCreditorSelect2();
 
             // Hide creditor type body
             $('#creditorTypeBody').slideUp();
@@ -311,6 +338,19 @@
             $('#creditorType').val('');
         });
     });
+
+    function resetCreditorSelect2() {
+        let $select = $('#creditorSelect');
+
+        // Clear selection
+        $select.val(null).trigger('change');
+
+        // Remove any loaded options (AJAX cache)
+        $select.find('option').remove();
+
+        // Close dropdown if open
+        $select.select2('close');
+    }
     
     setTimeout(() => {
         document.getElementById('sidebar-hide').click();
@@ -324,7 +364,9 @@
             type: 'post',
             url: "{{route('admin.customers.form')}}",
             data: {
-                customerId: cusId
+                customerId: cusId,
+                customerType: $('#creditorType').val(),
+                isPOS: true
             },
             headers:{
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -338,6 +380,33 @@
             }
         });
     }
+
+    window.showSelectedCreditor = function(customer) {
+        if (!customer) return;
+
+        $('#creditorSelectedSection').html(`
+            <div class="col-md-6">
+                <div class="alert alert-success d-flex justify-content-between align-items-center">
+                    <strong>${customer.name}</strong>
+                    <button type="button" class="btn btn-sm btn-danger" id="removeCreditor">
+                        Remove
+                    </button>
+                </div>
+                <input type="hidden" name="creditor_id" value="${customer.id}">
+            </div>
+        `);
+    }
+
+    $(document).on('click', '#removeCreditor', function () {
+        // Clear selected creditor
+        $('#creditorSelectedSection').empty();
+
+        // Reset select2
+        $('#creditorSelect').val(null).trigger('change');
+
+        // Show select dropdown again
+        $('#creditorSelectionSection').show();
+    });
 
     $(document).ready(function () {
         $('#creditorSelect').select2({
@@ -406,7 +475,7 @@
     });
 
 
-    function onCreditorSelected(creditorId) {
+    window.onCreditorSelected = function (creditorId) {
         if (!creditorId) return;
 
         fetch(`{{ url('admin/pos/load-today-invoice')}}/${creditorId}`)
