@@ -2,7 +2,7 @@
     <meta charset="utf-8">
     <!--  This file has been downloaded from bootdey.com @bootdey on twitter -->
     <!--  All snippets are MIT license http://bootdey.com/license -->
-    <title>Invoice - Bootdey.com</title>
+    <title>Debtor Invoice</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
@@ -152,7 +152,7 @@ margin-top:20px;
                             <th>Weight</th>
                             <th>Rate</th>
                             <th>Total</th>
-                            <th>Debitor</th>
+                            <!-- <th>Debitor</th> -->
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -165,7 +165,7 @@ margin-top:20px;
                             <td>{{ $item->weight }}</td>
                             <td>{{ number_format($item->rate, 2) }}</td>
                             <td>{{ number_format($item->total, 2) }}</td>
-                            <td>{{ optional($invoice->debitor)->name }}</td>
+                            <!-- <td>{{ optional($invoice->debitor)->name }}</td> -->
                             <td>{{ $item->invoice_status ?? '' }}Draft</td>
                         </tr>
                         @endforeach

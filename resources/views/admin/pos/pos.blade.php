@@ -92,14 +92,14 @@
                     </div>
 
                     <div class="d-flex gap-2">
-                        <button id="saveGenerateInvoiceBtn" class="btn btn-success flex-fill">
+                        <span id="saveGenerateInvoiceBtn" class="btn btn-success flex-fill">
                             Save & Generate Invoice
-                        </button>
-                        <button id="saveNextBtn" class="btn btn-primary flex-fill">
+                        </span>
+                        <span id="saveNextBtn" class="btn btn-primary flex-fill">
                             Save & Next
-                        </button>
+                        </span>
                     </div>
-                    <button id="clearCartBtn" class="btn btn-outline-secondary">Clear Cart</button>
+                    <!-- <button id="clearCartBtn" class="btn btn-outline-secondary">Clear Cart</button> -->
                 </div>
             </div>
         </div>
@@ -109,102 +109,27 @@
 
     <!-- INVOICE MODAL -->
     <div class="modal fade" id="invoiceModal" tabindex="-1">
-      <div class="modal-dialog modal-xl modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Invoice</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body" id="cartInvoice">
-                <!-- Invoice Header -->
-                <div class="text-center mb-3">
-                    <h3 class="fw-bold">माँ कर्मा ट्रेडर्स</h3>
-                    <p class="mb-0">नई सब्जीमंडी, सारंगपुर जिला राजगढ़ (म.प्र.)</p>
-                    <p class="mb-0">आयुष साहू | 📞 6261451385, सावरिया पाटीदार | 📞 7067692263, अशोक साहू | 📞9826137177</p>
-                    <hr>
-
-                    <p><strong>ख़रीदी बिल</strong></p>
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Invoice</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-
-                <!-- Creditor & Date Row -->
-                <div class="row mb-3">
-                    <div class="col-6">
-                    <h6 class="mb-0">
-                        <strong>नाम:</strong>
-                        <span id="invCreditor">John Doe</span>
-                    </h6>
-                    </div>
-                    <div class="col-6 text-end">
-                    <h6 class="mb-0">
-                        <strong>दिनांक:</strong>
-                        <span id="invDate">2025-12-30</span>
-                    </h6>
+                <div class="modal-body" id="cartInvoice">
+                    <div>
+                        <div class="col-md-6">
+                            <div class="alert alert-success d-flex justify-content-between align-items-center">
+                                <strong>Invoice Saved Successfully</strong>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Items Table -->
-                <table class="table table-bordered table-sm text-center align-middle">
-                    <thead class="table-light">
-                    <tr>
-                        <th>#</th>
-                        <th>वस्तु</th>
-                        <th>बोरी/थैले</th>
-                        <th>वज़न (kg)</th>
-                        <th>मूल्य</th>
-                        <th>कुल</th>
-                        <th>ग्राहक</th>
-                    </tr>
-                    </thead>
-                    <tbody id="invItems">
-                    <tr>
-                        <td>1</td>
-                        <td>Wheat</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>₹1.00</td>
-                        <td>₹1.00</td>
-                        <td>Arun Soni</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Rice</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>₹1.00</td>
-                        <td>₹1.00</td>
-                        <td>Deepika Soni</td>
-                    </tr>
-                    </tbody>
-                </table>
-
-                <!-- Totals Section -->
-                <div class="row justify-content-end mt-3">
-                    <div class="col-md-5">
-                    <table class="table table-bordered">
-                        <tr>
-                        <th class="text-end">कुल वेतन</th>
-                        <td class="text-end" id="invWage">₹18.00</td>
-                        </tr>
-                        <tr class="table-light">
-                        <th class="text-end fs-5">कुल योग</th>
-                        <td class="text-end fs-5 fw-bold" id="invCartGT">₹20.00</td>
-                        </tr>
-                    </table>
-                    </div>
+                <div class="modal-footer">
+                    <a href="" target="_blank" class="btn btn-secondary" id="printInvoiceBtn">Show Invoice</a>
                 </div>
-
-                <!-- Footer -->
-                <div class="text-center mt-4">
-                    <p class="mb-0"><em>आपके व्यवसाय के लिए धन्यवाद!</em></p>
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="printInvoiceBtn">Print</button>
             </div>
         </div>
-      </div>
     </div>
     <!-- INVOICE MODAL -->
 @endsection
@@ -296,6 +221,9 @@
         background: #f0f6ff;
     }
 
+    .ts-dropdown {
+        z-index: 9999 !important;
+    }
 </style>
 @endpush
 
@@ -307,13 +235,16 @@
             let selectedTitle = $(this).closest('.creditor-card')
                                        .find('.title')
                                        .text();
+            let selectedSubTitle = $(this).closest('.creditor-card')
+                                       .find('.subtitle')
+                                       .text();
             let icon = $(this).closest('.creditor-card').find('.icon').text();
 
             // Set hidden input value
             $('#creditorType').val($(this).val());
 
             // Show selected option text
-            $('#selectedCreditorType span').html(icon + ' ' + selectedTitle);
+            $('#selectedCreditorType span').html(icon + ' ' + selectedTitle + ' (' + selectedSubTitle + ')');
 
             // 🔥 RESET Select2 when type changes
             resetCreditorSelect2();
@@ -392,7 +323,7 @@
                         Remove
                     </button>
                 </div>
-                <input type="hidden" name="creditor_id" value="${customer.id}">
+                <input type="hidden" name="creditor_id" id="selectedCreditorId" value="${customer.id}">
             </div>
         `);
     }
@@ -536,6 +467,7 @@
             create: true,
             persist: false,
             maxItems: 1,
+            dropdownParent: 'body',
 
             load(query, callback) {
                 if (!query.length) return callback();
@@ -854,17 +786,22 @@
         // rowId--;
     }
 
-    document.getElementById('clearCartBtn').addEventListener('click', () => {
-        cart = {};
-        document.getElementById('cartTableBody').innerHTML = '';
+    var generateInvoice = false;
+    // Save & Generate Invoice
+    document.getElementById('saveGenerateInvoiceBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+
+        generateInvoice = true;
+        saveInvoice();
     });
 
+    // Save Invoice
+    document.getElementById('saveNextBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        saveInvoice();
+    });
 
-    // INVOICE
-    document.getElementById('saveGenerateInvoiceBtn').addEventListener('click', () => {
-        const body = document.getElementById('invItems'); body.innerHTML = '';
-        let i = 1;
-        console.log('cart--->>>', cart);
+    window.saveInvoice = function () {
         $.ajax({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -873,105 +810,25 @@
             url: "{{route('admin.pos.save')}}",
             data: {
                 cart: cart,
-                creditorId: $('#creditorSelect').val()
+                creditorId: $('#selectedCreditorId').val()
             },
             success: function (res) {
                 
                 if (res.status !== 'success') return;
 
-                const body = document.getElementById('invItems');
-                body.innerHTML = '';
-
-                let i = 1;
-
-                // 🔥 Invoice Header
-                $('#invCreditor').text(res.invoice.summary.creditor_name);
-
-                $('#invDate').text(res.invoice.summary.invoice_date);
-
-                // 🔥 Invoice Items (DB VALUES)
-                res.invoice.items.forEach(item => {
-                    body.insertAdjacentHTML('beforeend', `
-                        <tr>
-                            <td>${i++}</td>
-                            <td>${item.product}</td>
-                            <td>${item.pieces}</td>
-                            <td>${item.weight}</td>
-                            <td>${fmt(item.rate)}</td>
-                            <td>${fmt(item.total)}</td>
-                            <td>${item.debtor_name}</td>
-                        </tr>
-                    `);
-                });
-
-                // 🔥 Totals (DB VALUES)
-                $('#invAmount').text(fmt(res.invoice.summary.total_amount));
-
-                $('#invWage').text(fmt(res.invoice.summary.total_wage));
-
-                $('#invCartGT').text(fmt(res.invoice.summary.grand_total));
+                $('#printInvoiceBtn').hide();
+                if (generateInvoice) {
+                    $('#printInvoiceBtn').attr('href', res.creditor_invoice_url);
+                    $('#printInvoiceBtn').show();
+                                
+                    generateInvoice = false;
+                }
 
                 // 🔥 Show Invoice Modal
                 new bootstrap.Modal($('#invoiceModal')).show();
             }
         });
-    });
+    }
 
-    // document.getElementById('printInvoiceBtn').addEventListener('click',()=>window.print());
-    document.getElementById('printInvoiceBtn').addEventListener('click', () => {
-        const invoice = document.getElementById('cartInvoice').innerHTML;
-        const win = window.open('', '', 'width=800,height=600');
-        win.document.write(`
-            <html>
-            <head>
-                <title>Invoice</title>
-                    
-                <!-- Bootstrap CSS -->
-                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-                <style>
-                    /* General print formatting */
-                    body {
-                        font-family: Arial, sans-serif;
-                        margin: 20px;
-                    }
-
-                    /* Table styling */
-                    table {
-                        width: 100%;
-                        border-collapse: collapse;
-                        margin-top: 10px;
-                    }
-
-                    table, th, td {
-                        border: 1px solid #000;
-                    }
-
-                    th, td {
-                        padding: 8px 12px;
-                        text-align: left;
-                    }
-
-                    th {
-                        background: #f0f0f0;
-                        font-weight: bold;
-                    }
-
-                    /* Optional: remove Print window margins */
-                    @page {
-                        margin: 20px;
-                    }
-                </style>
-            </head>
-            <body>
-                ${invoice}
-            </body>
-            </html>
-        `);
-        win.document.close();
-        setTimeout(() => {
-            win.print();
-        }, 1000);
-    });
 </script>
 @endpush

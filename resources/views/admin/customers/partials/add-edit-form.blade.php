@@ -82,8 +82,7 @@
                             type="file"
                             name="profile_pic"
                             id="profilePicInput"
-                            class="form-control"
-                            {{ empty($customer->profile_pic) ? 'required' : '' }}>
+                            class="form-control">
                     </div>
                 </div>
 
@@ -92,7 +91,7 @@
                     <label class="form-label">Profile Pic</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                        <input type="file" name="profile_pic" class="form-control" value="{{ $customer->profile_pic ?? '' }}" required>
+                        <input type="file" name="profile_pic" class="form-control" value="{{ $customer->profile_pic ?? '' }}">
                     </div>
                 </div>
             @endif
