@@ -10,7 +10,8 @@
             <div class="text-primary p-4 d-flex align-items-center">
                 <div class="me-3">
                     <!-- <i class="fa fa-user-circle fa-4x"></i> -->
-                    <img style="width:100px; height:auto;" src="{{ asset('storage/customers/l8Ya9OU6LSA6WlyOfjnCFpbJVuo47rN5iBjmQl6q.png') }}" alt="Customer Image">
+                    <!-- <img style="width:100px; height:auto;" src="{{ asset('storage/customers/l8Ya9OU6LSA6WlyOfjnCFpbJVuo47rN5iBjmQl6q.png') }}" alt="Customer Image"> -->
+                    <img style="width:100px; height:auto;" src="{{ asset($customer->profile_pic) }}" alt="Customer Image">
                 </div>
                 <div>
                     <h4 class="mb-0">{{ $customer->name }}</h4>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use App\Models\CustomerGroup;
 use App\Models\User;
+use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -90,19 +91,28 @@ class CustomerController extends Controller
             }
 
             if ($request->hasFile('profile_pic')) {
-                $file     = $request->file('profile_pic');
-                $filename = now()->format('Ymd_His') . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
 
-                // Delete old image on update
-                if (Storage::disk('public')->exists("customers/{$customer->id}/profile_pics/".$filename)) {
-                    Storage::disk('public')->delete("customers/{$customer->id}/profile_pics/".$filename);
+                $file = $request->file('profile_pic');
+                $filename = 'img_' . time() . '.' . $file->getClientOriginalExtension();
+
+                // 🔹 Destination path
+                $destinationPath = public_path("/uploads/customers/{$customer->id}/profile_pics");
+
+                // 🔹 Create directory if not exists
+                if (!File::exists($destinationPath)) {
+                    File::makeDirectory($destinationPath, 0755, true);
                 }
 
-                $path = $request->file('profile_pic')->storeAs(
-                    "customers/{$customer->id}/profile_pics/",
-                    $filename,
-                    'public');
-                $customer->profile_pic = $path;
+                // 🔹 Delete old image if exists
+                if ($customer->profile_pic && File::exists(public_path($customer->profile_pic))) {
+                    File::delete(public_path($customer->profile_pic));
+                }
+
+                // 🔹 Move file
+                $file->move($destinationPath, $filename);
+
+                // 🔹 Save relative path in DB
+                $customer->profile_pic = "/uploads/customers/{$customer->id}/profile_pics/{$filename}";
             }
 
 
@@ -117,7 +127,7 @@ class CustomerController extends Controller
             DB::commit();
 
             return response()->json(
-            [
+                [
                     'code' => 200,
                     'success' => true,
                     'message' => 'Saved successfully.',
