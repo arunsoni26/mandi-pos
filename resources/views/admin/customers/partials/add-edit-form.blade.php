@@ -46,10 +46,47 @@
 
             {{-- Profile Pic --}}
             @if (isset($customer->profile_pic) && !empty($customer->profile_pic))
+                <!-- <div class="col-md-3">
+                    <label class="form-label">Profile Pic</label>
+                    <input type="file" name="profile_pic" class="form-control" value="{{ $customer->profile_pic ?? '' }}" required>
+                    <img style="width:100px; height:auto;" src="{{ asset($customer->profile_pic) }}" alt="user-image" class="user-avtar">
+
+                </div> -->
                 <div class="col-md-3">
                     <label class="form-label">Profile Pic</label>
-                    <img src="" alt="user-image" class="user-avtar">
+
+                    {{-- Image Wrapper --}}
+                    <div id="profileImageWrapper"
+                        class="position-relative"
+                        style="{{ !empty($customer->profile_pic) ? '' : 'display:none;' }}">
+
+                        <img
+                            src="{{ !empty($customer->profile_pic) ? asset($customer->profile_pic) : '' }}"
+                            style="width:100px; height:auto;"
+                            class="img-thumbnail">
+
+                        {{-- Cross Button --}}
+                        <button
+                            type="button"
+                            id="removeProfilePic"
+                            class="btn btn-danger btn-sm position-absolute top-0 end-0">
+                            &times;
+                        </button>
+                    </div>
+
+                    {{-- File Input --}}
+                    <div id="profileInputWrapper"
+                        style="{{ !empty($customer->profile_pic) ? 'display:none;' : '' }}"
+                        class="mt-2">
+                        <input
+                            type="file"
+                            name="profile_pic"
+                            id="profilePicInput"
+                            class="form-control"
+                            {{ empty($customer->profile_pic) ? 'required' : '' }}>
+                    </div>
                 </div>
+
             @else
                 <div class="col-md-3">
                     <label class="form-label">Profile Pic</label>
@@ -116,6 +153,7 @@
                     success: function (data) {
                         console.log('user_data----->>>', data);
                         if (data.code == 200) {
+                             $('#editModal').modal('hide');
                             toastr.success(data.message);
                             @if (!isset($isPOS) && !$isPOS)
                                 setTimeout(() => {
@@ -162,4 +200,21 @@
     }
 
 })();
+</script>
+
+<script>
+    document.getElementById('removeProfilePic')?.addEventListener('click', function () {
+
+        // Hide image
+        document.getElementById('profileImageWrapper').style.display = 'none';
+
+        // Show file input
+        const inputWrapper = document.getElementById('profileInputWrapper');
+        const fileInput = document.getElementById('profilePicInput');
+
+        inputWrapper.style.display = 'block';
+
+        // ✅ Make file input REQUIRED
+        fileInput.setAttribute('required', 'required');
+    });
 </script>
