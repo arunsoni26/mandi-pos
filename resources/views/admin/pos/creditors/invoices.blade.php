@@ -39,40 +39,7 @@
                                     </tr>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @forelse($invoices as $invoice)
-                                    <tr>
-                                        <td>
-                                            {{ invoiceNumber($invoice) }}
-                                        </td>
-                                        <td>
-                                            {{ \Carbon\Carbon::parse($invoice->invoice_date)->format('d M Y') }}
-                                        </td>
-                                        <td>
-                                            {{ $invoice->creditor->name }}
-                                        </td>
-                                        <td>
-                                            <a
-                                                href="{{-- route('pos.invoice.edit', [$invoice->creditor_id, $invoice->invoice_date]) --}}"
-                                                class="btn btn-sm btn-primary">
-                                                Edit
-                                            </a>
-
-                                            <a
-                                                href="{{ route('admin.pos.creditors.invoices.print', $invoice->id) }}"
-                                                class="btn btn-sm btn-secondary">
-                                                Print
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4" class="text-center text-muted">
-                                            No invoices found
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
+                           
                         </table>
                     </div>
                 </div>
@@ -100,10 +67,10 @@
                 processing: true,
                 serverSide: false,
                 ajax: {
-                    url: "{{ route('admin.customers.list') }}",
+                    url: "{{ route('admin.pos.creditors.invoices') }}",
                     data: function(d) {
+                        d.date = $('input[name="date"]').val(); // ✅ SEND DATE
                         d.status = $('#filterStatus').val();
-                        d.code = $('#filterCode').val();
                     },
                     error: function (xhr, error, thrown) {
                         console.error("DataTables AJAX error:", xhr.responseText);
@@ -129,12 +96,12 @@
                     }
                 },
                 columns: [
-                    { data: 'name' },
-                    { data: 'email' },
-                    { data: 'mobile' },
-                    { data: 'status_toggle', orderable: false, searchable: false },
-                    { data: 'actions', orderable: false, searchable: false, className: 'text-center' }
+                    { data: 'invoice' },
+                    { data: 'invoice_date' },
+                    { data: 'creditor_name' },
+                    { data: 'actions', orderable: false, searchable: false }
                 ]
+
             });
         }
 
