@@ -96,7 +96,7 @@
                             Save & Generate Invoice
                         </span>
                         <span id="saveNextBtn" class="btn btn-primary flex-fill">
-                            Save & Next
+                            Save
                         </span>
                     </div>
                     <!-- <button id="clearCartBtn" class="btn btn-outline-secondary">Clear Cart</button> -->
@@ -281,6 +281,8 @@
 
         // Close dropdown if open
         $select.select2('close');
+        
+        resetCart();
     }
     
     setTimeout(() => {
@@ -328,7 +330,23 @@
         `);
     }
 
+    $(document).on('click', '#addCustomerId', function () {
+        var data = $('#creditorSelect').select2('data');
+        var customerDetails = {};
+        customerDetails.id = data[0].id;
+        customerDetails.name = data[0].text;
+
+        $('#editModal').modal('hide');
+
+        // Hide Select2 section
+        $('#creditorSelectionSection').hide();
+        showSelectedCreditor(customerDetails);
+
+        onCreditorSelected(customerDetails.id);
+    });
+
     $(document).on('click', '#removeCreditor', function () {
+        resetCart();
         // Clear selected creditor
         $('#creditorSelectedSection').empty();
 
@@ -337,6 +355,7 @@
 
         // Show select dropdown again
         $('#creditorSelectionSection').show();
+        
     });
 
     $(document).ready(function () {
@@ -436,6 +455,8 @@
     function resetCart() {
         cart = {};
         document.getElementById('cartTableBody').innerHTML = '';
+
+        calculateGrandTotal();
     }
 
     function restoreCustomer(id) {

@@ -76,7 +76,7 @@
       </div>
     </div>
     
-    <div class="modal fade" id="editModal" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal fade" id="editModal" aria-labelledby="editModalLabel" aria-hidden="true" data-bs-backdrop="static">
         <div class="modal-dialog modal-xl">
             <div class="modal-content" id="addEditContent">
             </div>

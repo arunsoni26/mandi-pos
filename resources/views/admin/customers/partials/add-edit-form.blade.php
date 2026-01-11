@@ -2,7 +2,9 @@
     <h5 class="modal-title text-primary">
         <i class="fas fa-user-edit me-2"></i> {{ isset($customer) ? 'Edit' : 'Add' }} Customer
     </h5>
-    <button type="button" class="btn-close btn-close-primary" data-bs-dismiss="modal" aria-label="Close"></button>
+    @if(!$customer && !isset($customer->id))
+        <button type="button" class="btn-close btn-close-primary" data-bs-dismiss="modal" aria-label="Close"></button>
+    @endif
 </div>
 
 <form id="customerForm" novalidate="" enctype="multipart/form-data" >
@@ -108,12 +110,19 @@
     </div>
 
     <div class="modal-footer bg-light">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            <i class="fas fa-times me-1"></i> Close
-        </button>
+        @if(!$customer && !isset($customer->id))
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                <i class="fas fa-times me-1"></i> Close
+            </button>
+        @endif
         <button type="submit" id="customerFormSubmit" class="btn btn-success">
-            <i class="fas fa-save me-1"></i> Save
+            <i class="fas fa-save me-1"></i> Save & Add
         </button>
+        @if(!empty($customer))
+            <span id="addCustomerId" data-cust-id="{{ $customer->id }}" class="btn btn-secondary">
+                <i class="fas fa-plus me-1"></i> Add
+            </span>
+        @endif
     </div>
 </form>
 
