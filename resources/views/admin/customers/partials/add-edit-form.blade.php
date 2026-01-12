@@ -43,18 +43,12 @@
                     <label class="form-label">PAN</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                        <input type="text" name="pan" class="form-control" value="{{ $customer->pan ?? '' }}" required>
+                        <input type="text" name="pan" class="form-control" value="{{ $customer->pan ?? '' }}">
                     </div>
                 </div>
 
                 {{-- Profile Pic --}}
                 @if (isset($customer->profile_pic) && !empty($customer->profile_pic))
-                    <!-- <div class="col-md-3">
-                        <label class="form-label">Profile Pic</label>
-                        <input type="file" name="profile_pic" class="form-control" value="{{ $customer->profile_pic ?? '' }}" required>
-                        <img style="width:100px; height:auto;" src="{{ asset($customer->profile_pic) }}" alt="user-image" class="user-avtar">
-
-                    </div> -->
                     <div class="col-md-3">
                         <label class="form-label">Profile Pic</label>
 

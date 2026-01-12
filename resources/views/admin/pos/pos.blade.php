@@ -273,6 +273,10 @@
             // Optional: clear selection
             $('input[name="creditorTypeOption"]').prop('checked', false);
             $('#creditorType').val('');
+
+            if ($('#removeCreditor').length !== 0) {
+                $('#removeCreditor').click();
+            }
         });
     });
 
