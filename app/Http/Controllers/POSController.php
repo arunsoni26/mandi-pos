@@ -40,6 +40,8 @@ class POSController extends Controller
         $today = now()->format('Y-m-d');
         $creditorType = $request->creditorType ?? 'Raw Creditor';
 
+        $additionalCharge = $request->additionalCharge;
+
         /* 1️⃣ Resolve Creditor */
         $creditor = Customer::where('id', (int) $request->creditorId)
             ->firstOrFail();
@@ -111,7 +113,8 @@ class POSController extends Controller
                         [
                             'total_amount' => 0,
                             'total_wage' => 0,
-                            'grand_total' => 0
+                            'grand_total' => 0,
+                            'additional_charges' => 0
                         ]
                     );
 
@@ -162,10 +165,11 @@ class POSController extends Controller
                 }
             }
 
-            $creditorInvoice->update([
+            $creditorInvoice->update(attributes: [
                 'total_amount' => $creditorTotal,
                 'total_wage' => $creditorPieces * 9,
-                'grand_total' => $creditorTotal - ($creditorPieces * 9)
+                'additional_charges' => $additionalCharge,
+                'grand_total' => $creditorTotal - ($creditorPieces * 9) - $additionalCharge
             ]);
 
             DebtorInvoice::where('invoice_date', $today)->each(function ($inv) {

@@ -181,6 +181,10 @@ margin-top:20px;
                     <th class="text-end">Total Wage</th>
                     <td class="text-end" id="invWage">₹{{ number_format($invoice->total_wage, 2) }}</td>
                 </tr>
+                <tr>
+                    <th class="text-end">Additional Charges</th>
+                    <td class="text-end" id="invWage">₹{{ number_format($invoice->additional_charges, 2) }}</td>
+                </tr>
                 <tr class="table-light">
                     <th class="text-end fs-5">Grand Total</th>
                     <td class="text-end fs-5 fw-bold" id="invCartGT">₹{{ number_format($invoice->grand_total, 2) }}</td>

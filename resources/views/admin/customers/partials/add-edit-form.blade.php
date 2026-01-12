@@ -37,75 +37,77 @@
                 </div>
             </div>
 
-            {{-- PAN --}}
-            <div class="col-md-3">
-                <label class="form-label">PAN</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                    <input type="text" name="pan" class="form-control" value="{{ $customer->pan ?? '' }}" required>
-                </div>
-            </div>
-
-            {{-- Profile Pic --}}
-            @if (isset($customer->profile_pic) && !empty($customer->profile_pic))
-                <!-- <div class="col-md-3">
-                    <label class="form-label">Profile Pic</label>
-                    <input type="file" name="profile_pic" class="form-control" value="{{ $customer->profile_pic ?? '' }}" required>
-                    <img style="width:100px; height:auto;" src="{{ asset($customer->profile_pic) }}" alt="user-image" class="user-avtar">
-
-                </div> -->
+            @if(!empty($customerType) && $customerType == 'Active Creditor')
+                {{-- PAN --}}
                 <div class="col-md-3">
-                    <label class="form-label">Profile Pic</label>
-
-                    {{-- Image Wrapper --}}
-                    <div id="profileImageWrapper"
-                        class="position-relative"
-                        style="{{ !empty($customer->profile_pic) ? '' : 'display:none;' }}">
-
-                        <img
-                            src="{{ !empty($customer->profile_pic) ? asset($customer->profile_pic) : '' }}"
-                            style="width:100px; height:auto;"
-                            class="img-thumbnail">
-
-                        {{-- Cross Button --}}
-                        <button
-                            type="button"
-                            id="removeProfilePic"
-                            class="btn btn-danger btn-sm position-absolute top-0 end-0">
-                            &times;
-                        </button>
-                    </div>
-
-                    {{-- File Input --}}
-                    <div id="profileInputWrapper"
-                        style="{{ !empty($customer->profile_pic) ? 'display:none;' : '' }}"
-                        class="mt-2">
-                        <input
-                            type="file"
-                            name="profile_pic"
-                            id="profilePicInput"
-                            class="form-control">
-                    </div>
-                </div>
-
-            @else
-                <div class="col-md-3">
-                    <label class="form-label">Profile Pic</label>
+                    <label class="form-label">PAN</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                        <input type="file" name="profile_pic" class="form-control" value="{{ $customer->profile_pic ?? '' }}">
+                        <input type="text" name="pan" class="form-control" value="{{ $customer->pan ?? '' }}" required>
+                    </div>
+                </div>
+
+                {{-- Profile Pic --}}
+                @if (isset($customer->profile_pic) && !empty($customer->profile_pic))
+                    <!-- <div class="col-md-3">
+                        <label class="form-label">Profile Pic</label>
+                        <input type="file" name="profile_pic" class="form-control" value="{{ $customer->profile_pic ?? '' }}" required>
+                        <img style="width:100px; height:auto;" src="{{ asset($customer->profile_pic) }}" alt="user-image" class="user-avtar">
+
+                    </div> -->
+                    <div class="col-md-3">
+                        <label class="form-label">Profile Pic</label>
+
+                        {{-- Image Wrapper --}}
+                        <div id="profileImageWrapper"
+                            class="position-relative"
+                            style="{{ !empty($customer->profile_pic) ? '' : 'display:none;' }}">
+
+                            <img
+                                src="{{ !empty($customer->profile_pic) ? asset($customer->profile_pic) : '' }}"
+                                style="width:100px; height:auto;"
+                                class="img-thumbnail">
+
+                            {{-- Cross Button --}}
+                            <button
+                                type="button"
+                                id="removeProfilePic"
+                                class="btn btn-danger btn-sm position-absolute top-0 end-0">
+                                &times;
+                            </button>
+                        </div>
+
+                        {{-- File Input --}}
+                        <div id="profileInputWrapper"
+                            style="{{ !empty($customer->profile_pic) ? 'display:none;' : '' }}"
+                            class="mt-2">
+                            <input
+                                type="file"
+                                name="profile_pic"
+                                id="profilePicInput"
+                                class="form-control">
+                        </div>
+                    </div>
+
+                @else
+                    <div class="col-md-3">
+                        <label class="form-label">Profile Pic</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                            <input type="file" name="profile_pic" class="form-control" value="{{ $customer->profile_pic ?? '' }}">
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Address --}}
+                <div class="col-12">
+                    <label class="form-label">Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-location-dot"></i></span>
+                        <textarea name="address" rows="2" class="form-control" placeholder="Full Address">{{ $customer->address ?? '' }}</textarea>
                     </div>
                 </div>
             @endif
-
-            {{-- Address --}}
-            <div class="col-12">
-                <label class="form-label">Address</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fas fa-location-dot"></i></span>
-                    <textarea name="address" rows="2" class="form-control" placeholder="Full Address">{{ $customer->address ?? '' }}</textarea>
-                </div>
-            </div>
         </div>
     </div>
 

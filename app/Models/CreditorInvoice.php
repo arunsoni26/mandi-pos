@@ -11,6 +11,7 @@ class CreditorInvoice extends Model
         'invoice_date',
         'total_amount',
         'total_wage',
+        'additional_charges',
         'grand_total',
         'status',
         'updated_by',

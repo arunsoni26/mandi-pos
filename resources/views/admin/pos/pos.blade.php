@@ -85,6 +85,12 @@
                     <input name="wage" id="totalWage" class="form-control" readonly>
                 </div>
 
+                <!-- Additional SECTION -->
+                <div class="mb-3 p-2 border rounded bg-light w-50 ms-auto">
+                    <label class="form-label fw-bold">Additional</label>
+                    <input type="number" name="additional" id="additionalCharge" class="form-control">
+                </div>
+
                 <div class="d-grid gap-2">
                     <div class="mt-4 text-end">
                     <h4>Grand Total: ₹ <span id="grandTotal">0.00</span></h4>
@@ -92,14 +98,14 @@
                     </div>
 
                     <div class="d-flex gap-2">
-                        <span id="saveGenerateInvoiceBtn" class="btn btn-success flex-fill">
+                        <span id="saveGenerateInvoiceBtn" class="btn btn-success flex-fill disabled">
                             Save & Generate Invoice
                         </span>
-                        <span id="saveNextBtn" class="btn btn-primary flex-fill">
+                        <span id="saveNextBtn" class="btn btn-primary flex-fill disabled">
                             Save
                         </span>
                     </div>
-                    <!-- <button id="clearCartBtn" class="btn btn-outline-secondary">Clear Cart</button> -->
+                    <!-- <button id="clearCartBtn" class="btn btn-outline-secondary disabled">Clear Cart</button> -->
                 </div>
             </div>
         </div>
@@ -637,10 +643,17 @@
 
         return total;
     }
+    
+    $('#additionalCharge').on('input', function() {
+        calculateGrandTotal();
+    })
+
+    window.mainGrandTotal;
 
     function calculateGrandTotal() {
         let totalPieces = 0;
         let totalAmount = 0;
+        var additionalCharge = $('#additionalCharge').val()*1;
 
         Object.keys(cart).forEach(id => {
             const item = cart[id];
@@ -650,12 +663,20 @@
         });
 
         const wage = totalPieces * WAGE_PER_PIECE;
-        const grandTotal = totalAmount - wage;
+        const grandTotal = totalAmount - wage - additionalCharge;
 
         document.getElementById('totalWage').value = wage.toFixed(2);
         document.getElementById('grandTotal').innerText = grandTotal.toFixed(2);
         document.getElementById('cartGT').value = grandTotal.toFixed(2);
 
+        mainGrandTotal = grandTotal;
+
+        $('#saveGenerateInvoiceBtn').addClass('disabled');
+        $('#saveNextBtn').addClass('disabled');
+        if (mainGrandTotal > 0) {
+            $('#saveGenerateInvoiceBtn').removeClass('disabled');
+            $('#saveNextBtn').removeClass('disabled');
+        }
         return grandTotal;
     }
 
@@ -822,33 +843,42 @@
         saveInvoice();
     });
 
-    window.saveInvoice = function () {
-        $.ajax({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            type: "post",
-            url: "{{route('admin.pos.save')}}",
-            data: {
-                cart: cart,
-                creditorId: $('#selectedCreditorId').val()
-            },
-            success: function (res) {
-                
-                if (res.status !== 'success') return;
-
-                $('#printInvoiceBtn').hide();
-                if (generateInvoice) {
-                    $('#printInvoiceBtn').attr('href', res.creditor_invoice_url);
-                    $('#printInvoiceBtn').show();
-                                
-                    generateInvoice = false;
+    window.saveInvoice = function () {        
+        if (mainGrandTotal < 1) {
+            toastr.error("Grand total should not be 0 or less then 0");
+        }
+        if ($('#selectedCreditorId').val() == '') {
+            toastr.error("Please select the creditor");
+        }
+        if ($('#selectedCreditorId').val() !== '' && mainGrandTotal > 0 && Object.keys(cart).length != 0) {
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                type: "post",
+                url: "{{route('admin.pos.save')}}",
+                data: {
+                    cart: cart,
+                    additionalCharge: $('#additionalCharge').val(),
+                    creditorId: $('#selectedCreditorId').val()
+                },
+                success: function (res) {
+                    
+                    if (res.status !== 'success') return;
+    
+                    $('#printInvoiceBtn').hide();
+                    if (generateInvoice) {
+                        $('#printInvoiceBtn').attr('href', res.creditor_invoice_url);
+                        $('#printInvoiceBtn').show();
+                                    
+                        generateInvoice = false;
+                    }
+    
+                    // 🔥 Show Invoice Modal
+                    new bootstrap.Modal($('#invoiceModal')).show();
                 }
-
-                // 🔥 Show Invoice Modal
-                new bootstrap.Modal($('#invoiceModal')).show();
-            }
-        });
+            });
+        }
     }
 
 </script>
