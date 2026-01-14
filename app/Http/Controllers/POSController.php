@@ -70,6 +70,8 @@ class POSController extends Controller
                 'invoice_date' => $today
             ])->pluck('id');
 
+            // dd($debtorInvoiceIds);
+
             DebtorInvoiceItem::whereIn('debtor_invoice_id', $debtorInvoiceIds)->delete();
 
             /* 🔄 Reset totals */
@@ -117,6 +119,9 @@ class POSController extends Controller
                             'additional_charges' => 0
                         ]
                     );
+                    $debtorInvoice->creditor_id = $creditor->id;
+                    $debtorInvoice->save();
+                    // dd( $debtorInvoice );
 
                     $pieces = (int) $row['pieces'];
                     $weight = (float) $row['weight'];
@@ -136,7 +141,7 @@ class POSController extends Controller
 
                     DebtorInvoiceItem::create([
                         'debtor_invoice_id' => $debtorInvoice->id,
-                        'creditor_id' => $creditor->id,
+                        // 'creditor_id' => $creditor->id,
                         'product_name' => $row['product'],
                         'pieces' => $pieces,
                         'weight' => $row['weight'],
@@ -174,7 +179,7 @@ class POSController extends Controller
 
             DebtorInvoice::where('invoice_date', $today)->each(function ($inv) {
                 $inv->update([
-                    'grand_total' => $inv->total_amount - $inv->total_wage
+                    'grand_total' => $inv->total_amount
                 ]);
             });
                 

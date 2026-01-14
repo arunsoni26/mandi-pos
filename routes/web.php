@@ -95,6 +95,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
             Route::get('/debitors/invoices', [DebtorInvoiceController::class, 'index'])->name('debitors.invoices');
             Route::get('/debitors/invoices/{invoice}/print', [DebtorInvoiceController::class, 'print'])->name('debitors.invoices.print');
+            
+            Route::post('/debitors/invoices/update-percentage',
+                [DebtorInvoiceController::class, 'updatePercentage']
+            )->name('debitors.invoices.update-percentage');
         
         });
     });

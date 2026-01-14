@@ -35,6 +35,7 @@
                                         <th width="20%">Invoice ID</th>
                                         <th width="20%">Invoice Date</th>
                                         <th width="40%">Debitor</th>
+                                        <th width="40%">Invoice Percentage</th>
                                         <th width="20%">Action</th>
                                     </tr>
                                 </tr>
@@ -99,6 +100,7 @@
                     { data: 'invoice' },
                     { data: 'invoice_date' },
                     { data: 'debitor_name' },
+                    { data: 'inv_perc' },
                     { data: 'actions', orderable: false, searchable: false }
                 ]
             });
@@ -174,6 +176,41 @@
             }
         });
     });
+    $(document).on('click', '.edit-inv-perc', function () {
+        let wrapper = $(this).closest('.inv-perc-wrapper');
+
+        wrapper.find('.inv-perc-text, .edit-inv-perc').addClass('d-none');
+        wrapper.find('.inv-perc-edit').removeClass('d-none');
+    });
+
+    // Click save button
+    $(document).on('click', '.save-inv-perc', function () {
+        let wrapper = $(this).closest('.inv-perc-wrapper');
+        let invoiceId = wrapper.data('id');
+        let value = wrapper.find('.inv-perc-input').val();
+
+        $.ajax({
+            url: "{{ route('admin.pos.debitors.invoices.update-percentage') }}",
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                id: invoiceId,
+                invoice_percentage: value
+            },
+            success: function (res) {
+
+                let displayText = value && value > 0 ? value + '%' : 'N/A';
+
+                wrapper.find('.inv-perc-text').text(displayText);
+
+                wrapper.find('.inv-perc-edit').addClass('d-none');
+                wrapper.find('.inv-perc-text, .edit-inv-perc').removeClass('d-none');
+            },
+            error: function () {
+                alert('Failed to update percentage');
+            }
+        });
+    });
 </script>
 
 <style>
@@ -186,6 +223,13 @@
     }
     .table-hover tbody tr:hover {
         background-color: #f8f9fa;
+    }
+
+    .cursor-pointer {
+        cursor: pointer;
+    }
+    .inv-perc-wrapper i:hover {
+        opacity: 0.8;
     }
 </style>
 @endpush

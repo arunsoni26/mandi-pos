@@ -153,7 +153,7 @@ margin-top:20px;
                             <th>Rate</th>
                             <th>Total</th>
                             <!-- <th>Debitor</th> -->
-                            <th>Status</th>
+                            <!-- <th>Status</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -166,7 +166,7 @@ margin-top:20px;
                             <td>{{ number_format($item->rate, 2) }}</td>
                             <td>{{ number_format($item->total, 2) }}</td>
                             <!-- <td>{{ optional($invoice->debitor)->name }}</td> -->
-                            <td>{{ $item->invoice_status ?? '' }}Draft</td>
+                            <!-- <td>{{ $item->invoice_status ?? '' }}Draft</td> -->
                         </tr>
                         @endforeach
                     </tbody>
@@ -180,12 +180,15 @@ margin-top:20px;
                     <td class="text-end" id="invWage">₹{{ number_format($invoice->total_amount, 2) }}</td>
                 </tr>
                 <tr>
-                    <th class="text-end">Total Wage</th>
-                    <td class="text-end" id="invWage">₹{{ number_format($invoice->total_wage, 2) }}</td>
+                    <th class="text-end">Percentage</th>
+                    <td class="text-end" id="invWage">{{ number_format($invoice->inv_percentage, 1) }}%</td>
                 </tr>
+				@php
+					$grandTotal = $invoice->grand_total + ($invoice->grand_total * $invoice->inv_percentage / 100 );
+				@endphp
                 <tr class="table-light">
                     <th class="text-end fs-5">Grand Total</th>
-                    <td class="text-end fs-5 fw-bold" id="invCartGT">₹{{ number_format($invoice->grand_total, 2) }}</td>
+                    <td class="text-end fs-5 fw-bold" id="invCartGT">₹{{ number_format($grandTotal, 2) }}</td>
                 </tr>
             </table>
             </div>

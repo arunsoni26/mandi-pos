@@ -29,8 +29,7 @@ class CreditorInvoiceController extends Controller
                     'invoice_date'   => \Carbon\Carbon::parse($row->invoice_date)->format('d M Y'),
                     'creditor_name'  => $row->creditor->name ?? '-',
                     'actions'        => '
-                    <a href="' . route('admin.pos.creditors.invoices.print', $row->id) . '" 
-                       class="btn btn-sm btn-secondary">
+                    <a href="' . route('admin.pos.creditors.invoices.print', $row->id) . '" target="_blank" class="btn btn-sm btn-secondary">
                         Print
                     </a>
                 '
