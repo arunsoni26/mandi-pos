@@ -184,7 +184,7 @@ margin-top:20px;
                     <td class="text-end" id="invWage">{{ number_format($invoice->inv_percentage, 1) }}%</td>
                 </tr>
 				@php
-					$grandTotal = $invoice->grand_total + ($invoice->grand_total * $invoice->inv_percentage / 100 );
+					$grandTotal = $invoice->total_amount + ($invoice->total_amount * $invoice->inv_percentage / 100 );
 				@endphp
                 <tr class="table-light">
                     <th class="text-end fs-5">Grand Total</th>

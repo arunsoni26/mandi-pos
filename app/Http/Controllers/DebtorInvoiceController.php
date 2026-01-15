@@ -24,7 +24,7 @@ class DebtorInvoiceController extends Controller
             $invoices = $query->get();
 
             $data = $invoices->map(function ($row) {
-                $percentage = $row->invoice_percentage;
+                $percentage = $row->inv_percentage;
                 $displayPerc = $percentage !== null ? $percentage . '%' : 'N/A';
                 $inputValue = $percentage !== null ? $percentage : 0;
 
