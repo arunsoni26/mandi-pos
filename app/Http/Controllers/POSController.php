@@ -462,10 +462,6 @@ class POSController extends Controller
             $creditorInvoice->delete();
         }
 
-        return response()->json([
-            'code' => 200,
-            'status' => 'success',
-            'message' => 'Invoices deleted successfully'
-        ]);
+        return redirect()->back();
     }
 }
