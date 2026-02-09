@@ -677,10 +677,14 @@
 
         mainGrandTotal = grandTotal;
 
-        $('#saveGenerateInvoiceBtn').addClass('disabled');
+        @if (in_array(auth()->user()->role_id, [1,2]))
+            $('#saveGenerateInvoiceBtn').addClass('disabled');
+        @endif
         $('#saveNextBtn').addClass('disabled');
         if (mainGrandTotal > 0) {
-            $('#saveGenerateInvoiceBtn').removeClass('disabled');
+            @if (in_array(auth()->user()->role_id, [1,2]))
+                $('#saveGenerateInvoiceBtn').removeClass('disabled');
+            @endif
             $('#saveNextBtn').removeClass('disabled');
         }
         return grandTotal;
@@ -835,13 +839,16 @@
     }
 
     var generateInvoice = false;
-    // Save & Generate Invoice
-    document.getElementById('saveGenerateInvoiceBtn').addEventListener('click', (e) => {
-        e.preventDefault();
+    
+    @if (in_array(auth()->user()->role_id, [1,2]))
+        // Save & Generate Invoice
+        document.getElementById('saveGenerateInvoiceBtn').addEventListener('click', (e) => {
+            e.preventDefault();
 
-        generateInvoice = true;
-        saveInvoice();
-    });
+            generateInvoice = true;
+            saveInvoice();
+        });
+    @endif
 
     // Save Invoice
     document.getElementById('saveNextBtn').addEventListener('click', (e) => {
