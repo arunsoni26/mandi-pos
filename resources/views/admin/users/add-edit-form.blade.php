@@ -15,7 +15,7 @@
         <div class="row g-3">
 
             {{-- Name --}}
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label class="form-label">Name</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-user"></i></span>
@@ -24,11 +24,25 @@
             </div>
 
             {{-- Email --}}
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label class="form-label">Email</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                     <input type="email" name="email" class="form-control" value="{{ $user->email ?? '' }}" required>
+                </div>
+            </div>
+
+            {{-- Role --}}
+            <div class="col-md-4">
+                <label class="form-label">Role</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <select name="role_id" class="form-control" required>
+                        <option>Select Role</option>
+                        @foreach ($roles as $role)
+                            <option value="{{ $role->id }}" @if (isset($user) && $user->role_id == $role->id) selected @endif>{{ $role->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
             

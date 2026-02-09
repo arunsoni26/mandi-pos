@@ -10,47 +10,41 @@
         <!-- CART PANEL -->
         <div class="col-lg-12">
         <div class="card shadow-sm">
-            <div class="card-body" id="creditorTypeBody">            
-                <div class="creditor-options">
-                    
-                    <label class="creditor-card">
-                        <input type="radio" name="creditorTypeOption" value="Active Creditor">
-                        <div class="card-content">
-                            <div class="icon">🏪</div>
-                            <div class="title">Active Creditor</div>
-                            <div class="subtitle">व्यापारी</div>
-                        </div>
-                    </label>
-
-                    <label class="creditor-card">
-                        <input type="radio" name="creditorTypeOption" value="Raw Creditor">
-                        <div class="card-content">
-                            <div class="icon">🌾</div>
-                            <div class="title">Raw Creditor</div>
-                            <div class="subtitle">किसान</div>
-                        </div>
-                    </label>
-
-                </div>
-
+            <div class="card-body" id="creditorTypeBody" style="display: none;">
                 <!-- Hidden input -->
-                <input type="hidden" name="creditor_type" id="creditorType">
+                <!-- <input type="hidden" name="creditor_type" id="creditorType" value="{{ $invoice->creditor->customer_type }}"> -->
             </div>
-            <div class="card-body" id="posBody" style="display:none;">
+            <div class="card-body" id="posBody" style="">
                 <div class="d-flex align-items-center position-relative mb-4">
-                    <button type="button" id="backToCreditorType" class="btn btn-secondary mb-3 z-2">
-                        ← Back
-                    </button>
     
                     <!-- Selected creditor type -->
                     <div id="selectedCreditorType" class="fw-bold position-absolute start-50 translate-middle-x text-center w-100">
-                        <span class="badge bg-info fs-3"></span>
+                        <span class="badge bg-info fs-3" id="invoiceCreditorType">
+                            @if ($invoice->creditor->customer_type == 'Active Creditor')
+                                🏪 Active Creditor (व्यापारी)
+                            @else
+                                🌾 Raw Creditor (किसान)
+                            @endif
+                        </span>
                     </div>
                 </div>
                 
                 <div class="w-100 d-flex align-items-center">
                     <h5 class="card-title">Cart / Invoice Table</h5>
                     <span class="btn btn-primary ms-auto" onclick="addBlankRow();">Add</span>
+                </div>
+                <div class="row mb-3">        
+                    <div class="col-md-4">
+                        <input type="date" name="invoice_date" id="invoiceDate" class="form-control" value="{{ \Carbon\Carbon::parse($invoice->invoice_date)->format('Y-m-d') }}" readonly>
+                        <input type="hidden" name="actual_invoice_date" id="actualInvoiceDate" value="{{ \Carbon\Carbon::parse($invoice->invoice_date)->format('Y-m-d') }}">
+                    </div>
+                    <div class="col-md-4">
+                        <select id="customerTypeSelect" class="form-control">
+                            <option value="Active Creditor" @if($invoice->creditor->customer_type == 'Active Creditor') selected @endif>Active Creditor (व्यापारी)</option>
+                            <option value="Raw Creditor" @if($invoice->creditor->customer_type == 'Raw Creditor') selected @endif>Raw Creditor (किसान)</option>
+                        </select>
+                        <span class="fs-6 text-danger"><i class="fa fa-info-circle"></i>This will change actual creditor which is attached with the invoice</span>
+                    </div>
                 </div>
                 <div class="row mb-3" id="creditorSelectionSection">
                     <div class="col-md-4">
@@ -98,13 +92,12 @@
                     </div>
 
                     <div class="d-flex gap-2">
-                        @if (in_array(auth()->user()->role_id, [1,2]))
-                            <span id="saveGenerateInvoiceBtn" class="btn btn-success flex-fill disabled">
-                                Save & Generate Invoice
-                            </span>
-                        @endif
+                        <input id="invoiceId" name="invoiceId" type="hidden" value="{{ $invoice->id }}">
+                        <span id="saveGenerateInvoiceBtn" class="btn btn-success flex-fill disabled">
+                            Update & Generate Invoice
+                        </span>
                         <span id="saveNextBtn" class="btn btn-primary flex-fill disabled">
-                            Save
+                            Update
                         </span>
                     </div>
                     <!-- <button id="clearCartBtn" class="btn btn-outline-secondary disabled">Clear Cart</button> -->
@@ -237,6 +230,16 @@
 
 @push('custom-scripts')
 <script>
+    $('#customerTypeSelect').on('change', function() {
+        var customerType = $(this).val();
+        if (customerType == 'Active Creditor') {
+            $('#invoiceCreditorType').html('🏪 Active Creditor (व्यापारी)');
+        } else {
+            $('#invoiceCreditorType').html('🌾 Raw Creditor (किसान)');
+        }
+        resetCreditorSelect2();
+        $('#removeCreditor').click();
+    });
     $(document).ready(function () {
         // When selecting creditor type
         $('input[name="creditorTypeOption"]').on('change', function () {
@@ -294,7 +297,7 @@
         // Close dropdown if open
         $select.select2('close');
         
-        resetCart();
+        // resetCart();
     }
     
     setTimeout(() => {
@@ -310,7 +313,7 @@
             url: "{{route('admin.customers.form')}}",
             data: {
                 customerId: cusId,
-                customerType: $('#creditorType').val(),
+                customerType: $('#customerTypeSelect').val(),
                 isPOS: true
             },
             headers:{
@@ -330,7 +333,7 @@
         if (!customer) return;
 
         $('#creditorSelectedSection').html(`
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="alert alert-success d-flex justify-content-between align-items-center">
                     <strong>${customer.name}</strong>
                     <button type="button" class="btn btn-sm btn-danger" id="removeCreditor">
@@ -353,12 +356,13 @@
         // Hide Select2 section
         $('#creditorSelectionSection').hide();
         showSelectedCreditor(customerDetails);
+        var invoiceDate = $('#invoiceDate').val();
 
-        onCreditorSelected(customerDetails.id);
+        onCreditorSelected(customerDetails.id, invoiceDate);
     });
 
     $(document).on('click', '#removeCreditor', function () {
-        resetCart();
+        // resetCart();
         // Clear selected creditor
         $('#creditorSelectedSection').empty();
 
@@ -380,7 +384,7 @@
                 data: function (params) {
                     return {
                         searchTerm: params.term,
-                        type: $('#creditorType').val()
+                        type: $('#customerTypeSelect').val()
                     };
                 },
                 processResults: data => {
@@ -434,16 +438,33 @@
                 openCustomerModal(data.id);
             }
         });
+
+        window.selectCreditor = function (id, text) {
+            // let option = new Option(text, id, true, true);
+            // $('#creditorSelect').append(option).trigger('change');
+
+            var customerDetails = {};
+            customerDetails.id = id;
+            customerDetails.name = text;
+            var invoiceDate = '{{ \Carbon\Carbon::parse($invoice->invoice_date)->format('Y-m-d') }}';
+
+            // Hide Select2 section
+            $('#creditorSelectionSection').hide();
+            showSelectedCreditor(customerDetails);
+            onCreditorSelected(id, invoiceDate);
+        }
+
+        selectCreditor('{{ $invoice->creditor_id }}', '{{ $invoice->creditor->name }}');
     });
 
 
-    window.onCreditorSelected = function (creditorId) {
+    window.onCreditorSelected = function (creditorId, invoiceDate='') {
         if (!creditorId) return;
 
-        fetch(`{{ url('admin/pos/load-today-invoice')}}/${creditorId}`)
+        fetch(`{{ url('admin/pos/load-today-invoice')}}/${creditorId}/${invoiceDate}`)
             .then(res => res.json())
             .then(res => {
-                resetCart();
+                // resetCart();
 
                 if (res.exists) {
                     cart = res.cart;
@@ -456,8 +477,8 @@
                         restoreCustomer(id);
                     });
                 } else {
-                    cart = {}; // fresh invoice
-                    addBlankRow();
+                    // cart = {}; // fresh invoice
+                    // addBlankRow();
                 }
 
                 calculateGrandTotal();
@@ -862,9 +883,13 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 type: "post",
-                url: "{{route('admin.pos.save')}}",
+                url: "{{route('admin.pos.update')}}",
                 data: {
                     cart: cart,
+                    invoiceId: $('#invoiceId').val(),
+                    customerType: $('#customerTypeSelect').val(),
+                    invoiceDate: $('#invoiceDate').val(),
+                    actualInvoiceDate: $('#actualInvoiceDate').val(),
                     additionalCharge: $('#additionalCharge').val(),
                     creditorId: $('#selectedCreditorId').val()
                 },

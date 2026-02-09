@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -15,7 +16,14 @@ class UserController extends Controller
     public function list(Request $request) {
         $query = User::with('role') // Eager load group relation
             ->select('id', 'name', 'email', 'status', 'role_id')
-            ->where('role_id', 2);
+            // 
+            ;
+
+        if (auth()->user()->role_id == 1) {
+            $query->whereNot('role_id', operator: 1);
+        } else if (auth()->user()->role_id == 2) {
+            $query->whereNot('role_id', operator: 3);
+        }
 
         // Filters
         if ($request->role_id) {
@@ -54,8 +62,9 @@ class UserController extends Controller
     }
 
     public function form(Request $request) {
+        $roles = Role::where('status', '1')->get();
         $user = $request->userId ? User::findOrFail($request->userId) : null;
-        return view('admin.users.add-edit-form', compact('user'));
+        return view('admin.users.add-edit-form', compact('user', 'roles'));
     }
 
     public function save(Request $request) {
@@ -76,7 +85,10 @@ class UserController extends Controller
         $user->status = $request->status ?? 1;
         $user->save();
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'code' =>200,
+            'success' => true
+        ]);
     }
 
     public function toggleStatus($id) {

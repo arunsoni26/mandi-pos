@@ -35,21 +35,25 @@
                     <div class="dropdown-menu dropdown-user-profile dropdown-menu-end pc-h-dropdown">
                         <div class="dropdown-header">
                             <h4>
-                                Good Morning,
+                                {{ 
+                                    now()->hour >= 5 && now()->hour < 12 ? 'Good Morning' :
+                                    (now()->hour >= 12 && now()->hour < 17 ? 'Good Afternoon' :
+                                    (now()->hour >= 17 && now()->hour < 21 ? 'Good Evening' : 'Good Night'))
+                                }},
                                 <span class="small text-muted">{{ auth()->user()->name }}</span>
                             </h4>
-                            <p class="text-muted">Project Admin</p>
+                            <p class="text-muted">{{ auth()->user()->role->name }}</p>
                             <div class="profile-notification-scroll position-relative"
                                 style="max-height: calc(100vh - 280px)">
                                 <!-- <hr /> -->
-                                <a href="../application/account-profile-v1.html" class="dropdown-item">
+                                <a href="{{ route('admin.profile') }}" class="dropdown-item">
                                     <i class="ti ti-settings"></i>
                                     <span>Account Settings</span>
                                 </a>
-                                <a href="../application/social-profile.html" class="dropdown-item">
+                                <!-- <a href="../application/social-profile.html" class="dropdown-item">
                                     <i class="ti ti-user"></i>
                                     <span>Social Profile</span>
-                                </a>
+                                </a> -->
                                 <a href="../pages/login-v1.html" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                     <i class="ti ti-logout"></i>
                                     <span>Logout</span>

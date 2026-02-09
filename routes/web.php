@@ -85,8 +85,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         // GST Years quick-manage
         Route::group(['prefix' => 'pos', 'as' => 'pos.'], function () {
             Route::get('/main', [POSController::class,'index'])->name('main');
+            Route::get('/edit-pos/{invoice}', [POSController::class,'editPOS']);
             Route::post('/invoice/store', [POSController::class, 'store'])->name('save');
-            Route::get('/load-today-invoice/{creditor}',
+            Route::post('/invoice/update', [POSController::class, 'update'])->name('update');
+            Route::any('/invoice/delete/{invoiceId}', [POSController::class, 'deleteInvoice'])->name('delete');
+            Route::get('/load-today-invoice/{creditor}/{invoiceDate?}',
                 [POSController::class, 'loadTodayInvoice']
             )->name('loadTodayInvoice');
 

@@ -3,9 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DebtorInvoice extends Model
 {
+    use SoftDeletes;
+
+    protected $dates = ['deleted_at'];
+    
     protected $fillable = [
         'debtor_customer_id',
         'creditor_id',

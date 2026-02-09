@@ -4,16 +4,16 @@
             <div class="col-sm-6 my-1">
                 <p class="m-0">
                     <img src="http://localhost/mandi-POS/public/assets/images/mandi-pos-logo-1.png" alt="" class="img-fluid footer-logo"> &#9829; crafted by Team
-                    <a href="https://themeforest.net/user/codedthemes" target="_blank">We-Next</a>
+                    <a href="#" target="_blank">We-Next</a>
                 </p>
             </div>
             <div class="col-sm-6 ms-auto my-1">
                 <ul class="list-inline footer-link mb-0 justify-content-sm-end d-flex">
-                    <li class="list-inline-item"><a href="../index.html">Home</a></li>
-                    <li class="list-inline-item"><a href="https://codedthemes.gitbook.io/berry-bootstrap/"
+                    <li class="list-inline-item"><a href="#">Home</a></li>
+                    <!-- <li class="list-inline-item"><a href="#"
                             target="_blank">Documentation</a></li>
-                    <li class="list-inline-item"><a href="https://codedthemes.support-hub.io/"
-                            target="_blank">Support</a></li>
+                    <li class="list-inline-item"><a href="#"
+                            target="_blank">Support</a></li> -->
                 </ul>
             </div>
         </div>

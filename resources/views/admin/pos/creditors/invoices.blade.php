@@ -35,6 +35,7 @@
                                         <th width="20%">Invoice ID</th>
                                         <th width="20%">Invoice Date</th>
                                         <th width="40%">Creditor</th>
+                                        <th width="40%">Status</th>
                                         <th width="20%">Action</th>
                                     </tr>
                                 </tr>
@@ -99,6 +100,7 @@
                     { data: 'invoice' },
                     { data: 'invoice_date' },
                     { data: 'creditor_name' },
+                    { data: 'status' },
                     { data: 'actions', orderable: false, searchable: false }
                 ]
 
