@@ -81,8 +81,8 @@ class ActivityLogController extends Controller
                     'action' => ucfirst($row->action),
                     'model' => $module,
                     'model_id' => $reference,
-                    'old_values' => $formatValues($row->old_values),
-                    'new_values' => $formatValues($row->new_values),
+                    'old_values' => !empty($row->old_values) ? $formatValues($row->old_values) : "--",
+                    'new_values' => !empty($row->new_values) ? $formatValues($row->new_values) : "--",
                 ];
             });
 
