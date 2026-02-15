@@ -36,7 +36,6 @@ class ActivityLogController extends Controller
 
             $data = $logs->map(function ($row) {
                 $formatValues = function ($values) {
-
                     if (!$values || !is_array($values)) {
                         return '-';
                     }
@@ -45,17 +44,33 @@ class ActivityLogController extends Controller
 
                     foreach ($values as $key => $value) {
 
-                        // Make field name human readable
                         $label = ucwords(str_replace('_', ' ', $key));
 
-                        // Format dates
-                        if (str_contains($key, 'date') && $value) {
-                            $value = Carbon::parse($value)->format('d M Y');
+                        // ✅ If value is array → convert nicely
+                        if (is_array($value)) {
+
+                            $value = collect($value)->map(function ($item) {
+                                if (is_array($item)) {
+                                    return implode(', ', $item);
+                                }
+                                return $item;
+                            })->implode(' | ');
                         }
 
-                        // Format amounts
+                        // Format dates
+                        if (str_contains($key, 'date') && !empty($value)) {
+                            try {
+                                $value = \Carbon\Carbon::parse($value)->format('d M Y');
+                            } catch (\Exception $e) {
+                                // skip if invalid date
+                            }
+                        }
+
+                        // Format money
                         if (str_contains($key, 'total') || str_contains($key, 'amount')) {
-                            $value = number_format((float) $value, 2);
+                            if (is_numeric($value)) {
+                                $value = number_format((float) $value, 2);
+                            }
                         }
 
                         $output .= "<div><strong>{$label}:</strong> {$value}</div>";
@@ -81,8 +96,8 @@ class ActivityLogController extends Controller
                     'action' => ucfirst($row->action),
                     'model' => $module,
                     'model_id' => $reference,
-                    'old_values' => !empty($row->old_values) ? $row->old_values : "--",
-                    'new_values' => !empty($row->new_values) ? $row->new_value : "--",
+                    'old_values' => $formatValues($row->old_values),
+                    'new_values' => $formatValues($row->new_values),
                 ];
             });
 
