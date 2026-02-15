@@ -84,7 +84,7 @@ class ActivityLogController extends Controller
 
                 $reference = "";
                 if ($modelName === 'CreditorInvoice') {
-                    $invoice = CreditorInvoice::find($row->model_id);
+                    $invoice = CreditorInvoice::withTrashed()->where('id', $row->model_id)->first();
                     if ($invoice) {
                         $reference = invoiceNumber($invoice); // your helper
                     }
