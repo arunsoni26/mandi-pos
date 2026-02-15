@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\CreditorInvoiceController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerDocumentController;
@@ -104,6 +105,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
             )->name('debitors.invoices.update-percentage');
         
         });
+        
+        Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity.logs');
     });
     
 });

@@ -176,6 +176,7 @@ class POSController extends Controller
             }
 
             $creditorInvoice->update(attributes: [
+                'updated_by' => auth()->user()->id,
                 'total_amount' => $creditorTotal,
                 'total_wage' => $creditorPieces * 9,
                 'additional_charges' => $additionalCharge,
@@ -184,7 +185,8 @@ class POSController extends Controller
 
             DebtorInvoice::where('invoice_date', $today)->each(function ($inv) {
                 $inv->update([
-                    'grand_total' => $inv->total_amount
+                    'grand_total' => $inv->total_amount,
+                    'updated_by' => auth()->user()->id
                 ]);
             });
                 

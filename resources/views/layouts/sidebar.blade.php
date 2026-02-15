@@ -60,7 +60,7 @@
                     <li class="pc-item {{ request()->routeIs('admin.pos.creditors.invoices') ? 'active' : '' }}">
                         <a class='pc-link' href='{{ route('admin.pos.creditors.invoices') }}'>
                             <span class="pc-micon">
-                                <i class="fas fa-user-tie"></i>
+                                <i class="fas fa-file-invoice"></i>
                             </span>
                             <span class="align-middle">Creditor Invoices</span>
                         </a>
@@ -71,9 +71,20 @@
                     <li class="pc-item {{ request()->routeIs('admin.pos.debitors.invoices') ? 'active' : '' }}">
                         <a class='pc-link' href='{{ route('admin.pos.debitors.invoices') }}'>
                             <span class="pc-micon">
-                                <i class="fas fa-user-tie"></i>
+                                <i class="fas fa-file-invoice"></i>
                             </span>
                             <span class="align-middle">Debitor Invoices</span>
+                        </a>
+                    </li>
+                @endif
+                
+                @if(auth()->user()->role_id == 1)
+                    <li class="pc-item {{ request()->routeIs('admin.activity.logs') ? 'active' : '' }}">
+                        <a class='pc-link' href='{{ route('admin.activity.logs') }}'>
+                            <span class="pc-micon">
+                                <i class="fas fa-digital-tachograph"></i>
+                            </span>
+                            <span class="align-middle">Activity Logs</span>
                         </a>
                     </li>
                 @endif

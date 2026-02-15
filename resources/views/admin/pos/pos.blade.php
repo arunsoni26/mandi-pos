@@ -706,7 +706,14 @@
         row.setAttribute('data-row-id', id);
 
         row.innerHTML = `
-            <td><input class="form-control cart-product" data-id="${id}" value="${c.product || ''}"></td>
+            <td>
+                <select class="form-control cart-product" data-id="${id}">
+                    <option value="">Select Product</option>
+                    <option value="Aalu" ${c.product === 'Aalu' ? 'selected' : ''}>Aalu</option>
+                    <option value="Pyaj" ${c.product === 'Pyaj' ? 'selected' : ''}>Pyaj</option>
+                    <option value="Lehsun" ${c.product === 'Lehsun' ? 'selected' : ''}>Lehsun</option>
+                </select>
+            </td>
             <td><input type="number" class="form-control cart-pieces" data-id="${id}" value="${c.pieces || ''}"></td>
             <td><input type="number" class="form-control cart-weight" data-id="${id}" value="${c.weight || ''}"></td>
             <td><input type="number" class="form-control cart-rate" data-id="${id}" value="${c.rate || ''}"></td>

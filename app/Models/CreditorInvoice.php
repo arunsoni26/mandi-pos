@@ -36,4 +36,53 @@ class CreditorInvoice extends Model
     {
         return $this->belongsTo(Customer::class, 'creditor_id');
     }
+    protected static function booted()
+    {
+        // Create
+        static::created(function ($invoice) {
+            ActivityLog::create([
+                'user_id' => auth()->user()->id,
+                'action' => 'created',
+                'model_type' => self::class,
+                'model_id' => $invoice->id,
+                'new_values' => $invoice->toArray(),
+            ]);
+        });
+
+        // Update
+        static::updated(function ($invoice) {
+            $changes = $invoice->getChanges(); // only changed attributes
+
+            ActivityLog::create([
+                'user_id' => auth()->user()->id,
+                'action' => 'updated',
+                'model_type' => self::class,
+                'model_id' => $invoice->id,
+                'old_values' => array_intersect_key($invoice->getOriginal(), $changes),
+                'new_values' => $changes,
+            ]);
+        });
+
+        // Soft delete
+        static::deleted(function ($invoice) {
+            ActivityLog::create([
+                'user_id' => auth()->user()->id,
+                'action' => 'cancelled',
+                'model_type' => self::class,
+                'model_id' => $invoice->id,
+                'old_values' => $invoice->toArray(),
+            ]);
+        });
+
+        // Restore
+        static::restored(function ($invoice) {
+            ActivityLog::create([
+                'user_id' => auth()->user()->id,
+                'action' => 'restored',
+                'model_type' => self::class,
+                'model_id' => $invoice->id,
+                'new_values' => $invoice->toArray(),
+            ]);
+        });
+    }
 }

@@ -35,12 +35,24 @@
                                         <th width="20%">Invoice ID</th>
                                         <th width="20%">Invoice Date</th>
                                         <th width="40%">Creditor</th>
+                                        <th width="40%">Peice</th>
+                                        <th width="40%">Weight</th>
+                                        <th width="40%">Price</th>
                                         <th width="40%">Status</th>
                                         <th width="20%">Action</th>
                                     </tr>
                                 </tr>
                             </thead>
                            
+                            <tfoot class="table-light">
+                                <tr>
+                                    <th colspan="3" class="text-end fw-bold">Grand Total:</th>
+                                    <th id="totalPieces" class="fw-bold text-primary"></th>
+                                    <th id="totalWeight" class="fw-bold text-primary"></th>
+                                    <th id="totalAmount" class="fw-bold text-primary"></th>
+                                    <th colspan="2"></th>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -94,12 +106,24 @@
                         } else {
                             alert("Failed to load customer data. Please reload the page.");
                         }
+                    },
+                    dataSrc: function(json) {
+
+                        // ✅ SET GRAND TOTALS IN FOOTER
+                        $('#totalPieces').html(json.grandTotals.pieces);
+                        $('#totalWeight').html(json.grandTotals.weight);
+                        $('#totalAmount').html(json.grandTotals.amount);
+
+                        return json.data; // important
                     }
                 },
                 columns: [
                     { data: 'invoice' },
                     { data: 'invoice_date' },
                     { data: 'creditor_name' },
+                    { data: 'pieces' },
+                    { data: 'weight' },
+                    { data: 'amount' },
                     { data: 'status' },
                     { data: 'actions', orderable: false, searchable: false }
                 ]
