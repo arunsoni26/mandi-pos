@@ -67,6 +67,7 @@ class ActivityLogController extends Controller
                 $modelName = class_basename($row->model_type);
                 $module = $modelLabels[$modelName] ?? ucwords(str_replace('_', ' ', $modelName));
 
+                $reference = "";
                 if ($modelName === 'CreditorInvoice') {
                     $invoice = CreditorInvoice::find($row->model_id);
                     if ($invoice) {
