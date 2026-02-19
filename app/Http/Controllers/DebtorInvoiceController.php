@@ -14,6 +14,9 @@ class DebtorInvoiceController extends Controller
         if ($request->ajax()) {
 
             $query = DebtorInvoice::with('debitor')
+                ->withSum('items as total_pieces', 'pieces')
+                ->withSum('items as total_weight', 'weight')
+                ->withSum('items as total_amount', 'total')
                 ->whereDate('invoice_date', $date);
 
             // Optional filter
@@ -23,16 +26,33 @@ class DebtorInvoiceController extends Controller
 
             $invoices = $query->get();
 
-            $data = $invoices->map(function ($row) {
+            // ✅ Footer totals
+            $footer = [
+                'items_charge_sum'      => 0,
+                'percentage_charge_sum' => 0,
+                'total_charge_sum'      => 0,
+            ];
+            
+            $data = $invoices->map(function ($row) use (&$footer) {
+                $itemsAmount  = $row->total_amount ?? 0;
+
                 $percentage = $row->inv_percentage;
                 $displayPerc = $percentage !== null ? $percentage . '%' : 'N/A';
                 $inputValue = $percentage !== null ? $percentage : 0;
 
+                $invPercentage   = $row->inv_percentage ?? 0;
+
+                // ✅ Calculate percentage charge FROM invoice table percentage
+                $percentageCharge = ($itemsAmount * $invPercentage) / 100;
+                $footer['percentage_charge_sum'] += $percentageCharge;
+
                 return [
-                    'invoice'        => invoiceNumber($row),
-                    'invoice_date'   => \Carbon\Carbon::parse($row->invoice_date)->format('d M Y'),
-                    'debitor_name'  => $row->debitor->name ?? '-',
-                    'inv_perc'        => '
+                    'invoice'           => invoiceNumber($row),
+                    'invoice_date'      => \Carbon\Carbon::parse($row->invoice_date)->format('d M Y'),
+                    'debitor_name'      => $row->debitor->name ?? '-',
+                    'pieces'            => $row->total_pieces ?? 0,
+                    'weight'            => number_format($row->total_weight ?? 0, 2),
+                    'inv_perc'          => '
                         <div class="inv-perc-wrapper" data-id="'.$row->id.'">
 
                             <span class="inv-perc-text">
@@ -53,15 +73,29 @@ class DebtorInvoiceController extends Controller
                             </div>
                         </div>
                         ',
-                    'actions'        => '
+                    'perc_charge'       => number_format($percentageCharge ?? 0, 2),
+                    'total_amount'      => number_format($row->total_amount ?? 0, 2),
+                    'actions'           => '
                         <a href="' . route('admin.pos.debitors.invoices.print', $row->id) . '" target="_blank" class="btn btn-sm btn-secondary">
                             Print
                         </a>
                         '
                 ];
             });
+            $grandPieces = $invoices->sum('total_pieces');
+            $grandWeight = $invoices->sum('total_weight');
+            $grandPercentageCharge = $footer['percentage_charge_sum'];
+            $grandAmount = $invoices->sum('total_amount');
 
-            return response()->json(['data' => $data]);
+            return response()->json([
+                'data' => $data,
+                'grandTotals' => [
+                    'pieces' => $grandPieces,
+                    'weight' => number_format($grandWeight, 2),
+                    'percentageCharge' => number_format($grandPercentageCharge, 2),
+                    'amount' => number_format($grandAmount, 2),
+                ]
+            ]);
         }
 
         return view('admin.pos.debitors.invoices', compact('date'));

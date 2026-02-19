@@ -107,15 +107,11 @@ margin-top:20px;
             <div class="row">
     			<div class="receipt-header">
 					<div class="col-xs-6 col-sm-6 col-md-6">
-						<!-- <div class="receipt-left">
-							<img class="img-responsive" alt="iamgurdeeposahan" src="https://bootdey.com/img/Content/avatar/avatar6.png" style="width: 71px; border-radius: 43px;">
-						</div> -->
 					</div>
 					<div class="col-xs-6 col-sm-6 col-md-6 text-right">
 						<div class="receipt-right">
 							<h5>Maa Karma Traders</h5>
-							<p>Ayush Sahu | 📞 6261451385, Sawariya Patidar | 📞 7067692263, Ashok Sahu | 📞9826137177<i class="fa fa-phone"></i></p>
-							<!-- <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d8bbb7b5a8b9b6a198bfb5b9b1b4f6bbb7b5">[email&nbsp;protected]</a> <i class="fa fa-envelope-o"></i></p> -->
+							<p>Ayush Sahu | 📞 6261451385, Ashok Sahu | 📞9826137177<i class="fa fa-phone"></i></p>
 							<p>New Sabjimandi, Sarangpur Jila Rajgarh (M.P.) <i class="fa fa-location-arrow"></i></p>
 						</div>
 					</div>
@@ -128,8 +124,6 @@ margin-top:20px;
 						<div class="receipt-right">
 							<h5>{{ $invoice->debitor->name }} </h5>
 							<p><b>Mobile :</b> {{ $invoice->debitor->mobile ?? 'N/A' }}</p>
-							<!-- <p><b>Email :</b> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="63001610170c0e061123040e020a0f4d000c0e">[email&nbsp;protected]</a></p>
-							<p><b>Address :</b> New York, USA</p> -->
 						</div>
 					</div>
 					<div class="col-xs-4 col-sm-4 col-md-4">
@@ -157,19 +151,40 @@ margin-top:20px;
                         </tr>
                     </thead>
                     <tbody>
+						@php
+							$totalPieces = 0;
+							$totalWeight = 0;
+							$totalRate = 0;
+							$subTotal = 0;
+						@endphp
                         @foreach($invoice->items as $i => $item)
-                        <tr>
-                            <td>{{ $i + 1 }}</td>
-                            <td>{{ $item->product_name }}</td>
-                            <td>{{ $item->pieces }}</td>
-                            <td>{{ $item->weight }}</td>
-                            <td>{{ number_format($item->rate, 2) }}</td>
-                            <td>{{ number_format($item->total, 2) }}</td>
-                            <!-- <td>{{ optional($invoice->debitor)->name }}</td> -->
-                            <!-- <td>{{ $item->invoice_status ?? '' }}Draft</td> -->
-                        </tr>
+							<tr>
+								<td>{{ $i + 1 }}</td>
+								<td>{{ $item->product_name }}</td>
+								<td>{{ $item->pieces }}</td>
+								<td>{{ $item->weight }}</td>
+								<td>{{ number_format($item->rate, 2) }}</td>
+								<td>{{ number_format($item->total, 2) }}</td>
+								<!-- <td>{{ optional($invoice->debitor)->name }}</td> -->
+								<!-- <td>{{ $item->invoice_status ?? '' }}Draft</td> -->
+							</tr>
+							@php
+								$totalPieces = $totalPieces + $item->pieces;
+								$totalWeight = $totalWeight + $item->weight;
+								$totalRate = $totalRate + $item->rate;
+								$subTotal = $subTotal + $item->total;
+							@endphp
                         @endforeach
                     </tbody>
+                    <tfoot>
+							<tr>
+								<td colspan="2" style="font-weight: bolder !important;">Subtotal</td>
+								<td style="font-weight: bolder !important;">{{ $totalPieces ?? 0}}</td>
+								<td style="font-weight: bolder !important;">{{ number_format($totalWeight, 2) ?? 0}}</td>
+								<td style="font-weight: bolder !important;">{{ number_format($totalRate, 2) }}</td>
+								<td style="font-weight: bolder !important;">{{ number_format($subTotal, 2) }}</td>
+							</tr>
+                    </tfoot>
                 </table>
             </div>
 
@@ -179,16 +194,29 @@ margin-top:20px;
                     <th class="text-end">Total Amount</th>
                     <td class="text-end" id="invWage">₹{{ number_format($invoice->total_amount, 2) }}</td>
                 </tr>
-                <tr>
-                    <th class="text-end">Percentage</th>
-                    <td class="text-end" id="invWage">{{ number_format($invoice->inv_percentage, 1) }}%</td>
-                </tr>
 				@php
-					$grandTotal = $invoice->total_amount + ($invoice->total_amount * $invoice->inv_percentage / 100 );
+					$percentageCharge = $invoice->total_amount * $invoice->inv_percentage / 100;
+					$grandTotal = $invoice->total_amount + ( $percentageCharge );
 				@endphp
+                <tr>
+                    <th class="text-end">Percentage ({{ number_format($invoice->inv_percentage, 1) }}%)</th>
+                    <td class="text-end" id="invWage"> {{ $percentageCharge }} </td>
+                </tr>
                 <tr class="table-light">
                     <th class="text-end fs-5">Grand Total</th>
                     <td class="text-end fs-5 fw-bold" id="invCartGT">₹{{ number_format($grandTotal, 2) }}</td>
+                </tr>
+                <tr class="table-light">
+                    <th class="text-end fs-5"></th>
+                    <td class="text-end fs-5 fw-bold"></td>
+                </tr>
+                <tr class="table-light">
+                    <th class="text-end fs-5"></th>
+                    <td class="text-end fs-5 fw-bold"></td>
+                </tr>
+                <tr class="table-light">
+                    <th class="text-end fs-5"></th>
+                    <td class="text-end fs-5 fw-bold"></td>
                 </tr>
             </table>
             </div>
