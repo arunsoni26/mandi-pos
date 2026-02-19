@@ -35,11 +35,11 @@
                                         <th width="20%">Invoice ID</th>
                                         <th width="20%">Invoice Date</th>
                                         <th width="40%">Debitor</th>
-                                        <th width="40%">Peice</th>
-                                        <th width="40%">Weight</th>
+                                        <th width="40%">Peices</th>
+                                        <th width="40%">Price</th>
                                         <th width="40%">Invoice Percentage</th>
                                         <th width="40%">Percentage<br>Charge</th>
-                                        <th width="40%">Price</th>
+                                        <th width="40%">Total</th>
                                         <th width="20%">Action</th>
                                     </tr>
                                 </tr>
@@ -49,10 +49,10 @@
                                 <tr>
                                     <th colspan="3" class="fw-bold">Grand Total:</th>
                                     <th id="totalPieces" class="fw-bold text-primary"></th>
-                                    <th id="totalWeight" class="fw-bold text-primary"></th>
+                                    <th id="totalAmount" class="fw-bold text-primary"></th>
                                     <th class="fw-bold text-primary"></th>
                                     <th id="totalCharge" class="fw-bold text-primary"></th>
-                                    <th id="totalAmount" class="fw-bold text-primary"></th>
+                                    <th id="GrandTotal" class="fw-bold text-primary"></th>
                                     <th></th>
                                 </tr>
                             </tfoot>
@@ -115,9 +115,9 @@
 
                         // ✅ SET GRAND TOTALS IN FOOTER
                         $('#totalPieces').html(json.grandTotals.pieces);
-                        $('#totalWeight').html(json.grandTotals.weight);
-                        $('#totalCharge').html(json.grandTotals.percentageCharge);
                         $('#totalAmount').html(json.grandTotals.amount);
+                        $('#totalCharge').html(json.grandTotals.percentageCharge);
+                        $('#GrandTotal').html(json.grandTotals.grandTotal);
 
                         return json.data; // important
                     }
@@ -127,10 +127,10 @@
                     { data: 'invoice_date' },
                     { data: 'debitor_name' },
                     { data: 'pieces' },
-                    { data: 'weight' },
+                    { data: 'amount' },
                     { data: 'inv_perc' },
                     { data: 'perc_charge' },
-                    { data: 'total_amount' },
+                    { data: 'total' },
                     { data: 'actions', orderable: false, searchable: false }
                 ]
             });

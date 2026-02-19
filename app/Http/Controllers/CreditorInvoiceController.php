@@ -55,8 +55,9 @@ class CreditorInvoiceController extends Controller
                     'invoice_date'  => '<span '.$rowStyle.'>' . \Carbon\Carbon::parse($row->invoice_date)->format('d M Y') . '</span>',
                     'creditor_name' => '<span '.$rowStyle.'>' . ($row->creditor->name ?? '-') . '</span>',
                     'pieces'        => '<span '.$rowStyle.'>' . ($row->total_pieces ?? 0) . '</span>',
-                    'weight'        => '<span '.$rowStyle.'>' . number_format($row->total_weight ?? 0, 2) . '</span>',
+                    'wages'        => '<span '.$rowStyle.'>' . number_format($row->total_wage ?? 0, 2) . '</span>',
                     'amount'        => '<span '.$rowStyle.'>' . number_format($row->total_amount ?? 0, 2) . '</span>',
+                    'total'        => '<span '.$rowStyle.'>' . number_format($row->grand_total ?? 0, 2) . '</span>',
                     'status'        => $statusBadge,
                     'actions'       => '
                         <a href="' . route('admin.pos.creditors.invoices.print', $row->id) . '"
@@ -69,15 +70,17 @@ class CreditorInvoiceController extends Controller
                 ];
             });
             $grandPieces = $invoices->sum('total_pieces');
-            $grandWeight = $invoices->sum('total_weight');
+            $grandWage = $invoices->sum('total_wage');
             $grandAmount = $invoices->sum('total_amount');
+            $grandTotal = $invoices->sum('grand_total');
 
             return response()->json([
                 'data' => $data,
                 'grandTotals' => [
                     'pieces' => $grandPieces,
-                    'weight' => number_format($grandWeight, 2),
+                    'wages' => number_format($grandWage, 2),
                     'amount' => number_format($grandAmount, 2),
+                    'grandTotal' => number_format($grandTotal, 2),
                 ]
             ]);
         }

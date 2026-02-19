@@ -36,8 +36,9 @@
                                         <th width="20%">Invoice Date</th>
                                         <th width="40%">Creditor</th>
                                         <th width="40%">Peice</th>
-                                        <th width="40%">Weight</th>
+                                        <th width="40%">Wage</th>
                                         <th width="40%">Price</th>
+                                        <th width="40%">Total</th>
                                         <th width="40%">Status</th>
                                         <th width="20%">Action</th>
                                     </tr>
@@ -46,10 +47,11 @@
                            
                             <tfoot class="table-light">
                                 <tr>
-                                    <th colspan="3" class="text-end fw-bold">Grand Total:</th>
+                                    <th colspan="3" class="fw-bold">Grand Total:</th>
                                     <th id="totalPieces" class="fw-bold text-primary"></th>
-                                    <th id="totalWeight" class="fw-bold text-primary"></th>
+                                    <th id="totalWage" class="fw-bold text-primary"></th>
                                     <th id="totalAmount" class="fw-bold text-primary"></th>
+                                    <th id="grandTotal" class="fw-bold text-primary"></th>
                                     <th colspan="2"></th>
                                 </tr>
                             </tfoot>
@@ -111,8 +113,9 @@
 
                         // ✅ SET GRAND TOTALS IN FOOTER
                         $('#totalPieces').html(json.grandTotals.pieces);
-                        $('#totalWeight').html(json.grandTotals.weight);
+                        $('#totalWage').html(json.grandTotals.wages);
                         $('#totalAmount').html(json.grandTotals.amount);
+                        $('#grandTotal').html(json.grandTotals.grandTotal);
 
                         return json.data; // important
                     }
@@ -122,8 +125,9 @@
                     { data: 'invoice_date' },
                     { data: 'creditor_name' },
                     { data: 'pieces' },
-                    { data: 'weight' },
+                    { data: 'wages' },
                     { data: 'amount' },
+                    { data: 'total' },
                     { data: 'status' },
                     { data: 'actions', orderable: false, searchable: false }
                 ]

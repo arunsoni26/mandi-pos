@@ -51,7 +51,7 @@ class DebtorInvoiceController extends Controller
                     'invoice_date'      => \Carbon\Carbon::parse($row->invoice_date)->format('d M Y'),
                     'debitor_name'      => $row->debitor->name ?? '-',
                     'pieces'            => $row->total_pieces ?? 0,
-                    'weight'            => number_format($row->total_weight ?? 0, 2),
+                    'amount'            => number_format($row->total_amount ?? 0, 2),
                     'inv_perc'          => '
                         <div class="inv-perc-wrapper" data-id="'.$row->id.'">
 
@@ -74,7 +74,7 @@ class DebtorInvoiceController extends Controller
                         </div>
                         ',
                     'perc_charge'       => number_format($percentageCharge ?? 0, 2),
-                    'total_amount'      => number_format($row->total_amount ?? 0, 2),
+                    'total'      => number_format(($row->total_amount + $percentageCharge) ?? 0, 2),
                     'actions'           => '
                         <a href="' . route('admin.pos.debitors.invoices.print', $row->id) . '" target="_blank" class="btn btn-sm btn-secondary">
                             Print
@@ -83,17 +83,17 @@ class DebtorInvoiceController extends Controller
                 ];
             });
             $grandPieces = $invoices->sum('total_pieces');
-            $grandWeight = $invoices->sum('total_weight');
+            $totalAmount = $invoices->sum('total_amount');
             $grandPercentageCharge = $footer['percentage_charge_sum'];
-            $grandAmount = $invoices->sum('total_amount');
+            $grandTotal = $invoices->sum('total_amount') + $grandPercentageCharge;
 
             return response()->json([
                 'data' => $data,
                 'grandTotals' => [
                     'pieces' => $grandPieces,
-                    'weight' => number_format($grandWeight, 2),
+                    'amount' => number_format($totalAmount, 2),
                     'percentageCharge' => number_format($grandPercentageCharge, 2),
-                    'amount' => number_format($grandAmount, 2),
+                    'grandTotal' => number_format($grandTotal, 2),
                 ]
             ]);
         }
