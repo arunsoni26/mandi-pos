@@ -38,7 +38,7 @@
                                         <th width="40%">Peice</th>
                                         <th width="40%">Weight</th>
                                         <th width="40%">Invoice Percentage</th>
-                                        <th width="40%">Charge</th>
+                                        <th width="40%">Percentage<br>Charge</th>
                                         <th width="40%">Price</th>
                                         <th width="20%">Action</th>
                                     </tr>
