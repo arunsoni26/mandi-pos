@@ -156,6 +156,7 @@ margin-top:20px;
 							$totalWeight = 0;
 							$totalRate = 0;
 							$subTotal = 0;
+							$invoiceSubTotal = 0;
 						@endphp
                         @foreach($invoice->items as $i => $item)
 							<tr>
@@ -173,6 +174,7 @@ margin-top:20px;
 								$totalWeight = $totalWeight + $item->weight;
 								$totalRate = $totalRate + $item->rate;
 								$subTotal = $subTotal + $item->total;
+								$invoiceSubTotal = $subTotal;
 							@endphp
                         @endforeach
                     </tbody>
@@ -192,11 +194,11 @@ margin-top:20px;
                 <table class="table table-bordered">
                 <tr>
                     <th class="text-end">Total Amount</th>
-                    <td class="text-end" id="invWage">₹{{ number_format($invoice->total_amount, 2) }}</td>
+                    <td class="text-end" id="invWage">₹{{ number_format($invoiceSubTotal, 2) }}</td>
                 </tr>
 				@php
-					$percentageCharge = $invoice->total_amount * $invoice->inv_percentage / 100;
-					$grandTotal = $invoice->total_amount + ( $percentageCharge );
+					$percentageCharge = $invoiceSubTotal * $invoice->inv_percentage / 100;
+					$grandTotal = $invoiceSubTotal + ( $percentageCharge );
 				@endphp
                 <tr>
                     <th class="text-end">Percentage ({{ number_format($invoice->inv_percentage, 1) }}%)</th>
