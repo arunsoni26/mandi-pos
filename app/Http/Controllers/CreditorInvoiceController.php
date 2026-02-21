@@ -51,7 +51,7 @@ class CreditorInvoiceController extends Controller
                     ';
 
                 return [
-                    'invoice'       => '<span '.$rowStyle.'>' . invoiceNumber($row) . '</span>',
+                    'invoice'       => '<span '.$rowStyle.'>' . str_replace('INV', 'INVC', invoiceNumber($row)) . '</span>',
                     'invoice_date'  => '<span '.$rowStyle.'>' . \Carbon\Carbon::parse($row->invoice_date)->format('d M Y') . '</span>',
                     'creditor_name' => '<span '.$rowStyle.'>' . ($row->creditor->name ?? '-') . '</span>',
                     'pieces'        => '<span '.$rowStyle.'>' . ($row->total_pieces ?? 0) . '</span>',

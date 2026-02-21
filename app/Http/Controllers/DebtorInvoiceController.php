@@ -47,7 +47,7 @@ class DebtorInvoiceController extends Controller
                 $footer['percentage_charge_sum'] += $percentageCharge;
 
                 return [
-                    'invoice'           => invoiceNumber($row),
+                    'invoice'           => str_replace('INV', 'INVD', invoiceNumber($row)),
                     'invoice_date'      => \Carbon\Carbon::parse($row->invoice_date)->format('d M Y'),
                     'debitor_name'      => $row->debitor->name ?? '-',
                     'pieces'            => $row->total_pieces ?? 0,

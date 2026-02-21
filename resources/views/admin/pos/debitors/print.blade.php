@@ -183,7 +183,7 @@ margin-top:20px;
 								<td colspan="2" style="font-weight: bolder !important;">Subtotal</td>
 								<td style="font-weight: bolder !important;">{{ $totalPieces ?? 0}}</td>
 								<td style="font-weight: bolder !important;">{{ number_format($totalWeight, 2) ?? 0}}</td>
-								<td style="font-weight: bolder !important;">{{ number_format($totalRate, 2) }}</td>
+								<td style="font-weight: bolder !important;"></td>
 								<td style="font-weight: bolder !important;">{{ number_format($subTotal, 2) }}</td>
 							</tr>
                     </tfoot>
