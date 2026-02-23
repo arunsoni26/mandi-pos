@@ -20,7 +20,8 @@ class CustomerController extends Controller
 
     public function list(Request $request)
     {
-        $query = Customer::select('id', 'name', 'mobile', 'pan', 'address', 'status', 'hide_dashboard');
+        $query = Customer::withTrashed()
+            ->where('customer_type', 'Active Creditor');
 
         // Filters
         if ($request->status !== null && $request->status !== '') {
@@ -31,6 +32,7 @@ class CustomerController extends Controller
 
         // Format Data
         $data = $customers->map(function ($row) {
+            $isDeleted = $row->trashed();
             return [
                 'name' => $row->name,
                 'mobile' => $row->mobile,
@@ -38,14 +40,18 @@ class CustomerController extends Controller
                 'address' => $row->address,
 
                 'status_toggle' => '
-                    <div class="form-check form-switch">
+                    <div class="form-check form-switch" '. $isDeleted .'>
                         <input 
                             type="checkbox"
                             class="form-check-input toggle-status"
                             data-id="' . $row->id . '" ' . ($row->status ? 'checked' : '') . '>
                     </div>
                 ',
-                'actions' => view('admin.customers.partials.actions', compact('row'))->render()
+                'actions' => $isDeleted
+                    ? '<button class="btn btn-sm btn-success restore-customer" data-id="' . $row->id . '">
+                            <i class="fa fa-undo"></i> Restore
+                    </button>'
+                    : view('admin.customers.partials.actions', compact('row'))->render()
             ];
         });
 
@@ -65,6 +71,7 @@ class CustomerController extends Controller
         $isPOS = $request->isPOS ?? false;
         $customer = $request->customerId ? Customer::findOrFail($request->customerId) : null;
         $customerType = $request->customerType;
+        // dd($isPOS);
         return view('admin.customers.partials.add-edit-form', compact('customer', 'customerType', 'isPOS'));
     }
 
@@ -144,6 +151,23 @@ class CustomerController extends Controller
     {
         $customer = Customer::findOrFail($request->custId);
         return view('admin.customers.partials.view', compact('customer'));
+    }
+
+    public function destroy($id) {
+        $customer = Customer::findOrFail($id);
+        $customer->delete();
+        return redirect()->back();
+    }
+
+    public function restore($id) {
+        $customer = Customer::withTrashed()->findOrFail($id);
+
+        if ($customer->trashed()) {
+            $customer->restore();
+            return redirect()->back();
+        }
+
+        return redirect()->back();
     }
 
     public function creditors(Request $request)

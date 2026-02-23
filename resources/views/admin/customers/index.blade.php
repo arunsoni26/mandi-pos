@@ -63,7 +63,7 @@
         let retryCount = 1;
         let table;
 
-        function initCustomersTable(retries = retryCount) {
+        function initCustomersTable (retries = retryCount) {
             if ($.fn.DataTable.isDataTable('#customersTable')) {
                 $('#customersTable').DataTable().destroy();
             }
@@ -180,6 +180,27 @@
                 $('#editModal').modal('show');
             }
         });
+    });
+
+    $(document).on('click', '.restore-customer', function () {
+        let id = $(this).data('id');
+
+        if (confirm('Are you sure you want to restore this customer?')) {
+
+            $.ajax({
+                url: '{{ url('/admin/customers/') }}/' + id + '/restore',
+                type: 'POST',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function (response) {
+                    location.reload(); // or reload datatable
+                },
+                error: function (xhr) {
+                    console('error-->>>>', xhr);
+                }
+            });
+        }
     });
 </script>
 

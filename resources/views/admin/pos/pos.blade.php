@@ -390,7 +390,7 @@
                         customer: c
                     }));
 
-                    if (data.creditors.length === 0) {
+                    if ($('#creditorType').val() == 'Raw Creditor' && data.creditors.length === 0) {
                         results.push({
                             id: 'create_new',
                             text: 'Add new customer',

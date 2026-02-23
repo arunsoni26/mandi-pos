@@ -30,9 +30,10 @@
                         if (data.code == 200) {
                             toastr.success(data.message);
                             @if (isset($isPOS) && !$isPOS)
-                                setTimeout(() => {
-                                    window.location.reload();
-                                }, 1000);
+                                // setTimeout(() => {
+                                //     window.location.reload();
+                                // }, 1000);
+                                initCustomersTable();
                             @else
                                 // Hide Select2 section
                                 $('#creditorSelectionSection').hide();

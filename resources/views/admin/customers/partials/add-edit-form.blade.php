@@ -14,11 +14,16 @@
     @endif
     @if(!empty($customerType))
         <input type="hidden" name="customer_type" value="{{ $customerType }}">
+    @elseif (!isset($isPOS) && !$isPOS)
+        <input type="hidden" name="customer_type" value="Active Creditor">
     @endif
 
     <div class="modal-body">
         <div class="row g-3">
-
+            @if (!isset($isPOS) && !$isPOS)
+                🏪 Active Customer (व्यापारी)
+            @endif
+            
             {{-- Name --}}
             <div class="col-md-6">
                 <label class="form-label">Name</label>
@@ -37,7 +42,7 @@
                 </div>
             </div>
 
-            @if(!empty($customerType) && $customerType == 'Active Creditor')
+            @if((isset($isPOS) && !$isPOS))
                 {{-- PAN --}}
                 <div class="col-md-3">
                     <label class="form-label">PAN</label>
@@ -111,9 +116,18 @@
                 <i class="fas fa-times me-1"></i> Close
             </button>
         @endif
-        <button type="submit" id="customerFormSubmit" class="btn btn-success">
-            <i class="fas fa-save me-1"></i> Save & Add
-        </button>
+        @php
+            $isActiveCreditorOnPOS =
+                isset($isPOS) &&
+                $isPOS &&
+                isset($customer) &&
+                $customer->customer_type === 'Active Creditor';
+        @endphp
+        @if(!$isActiveCreditorOnPOS)
+            <button type="submit" id="customerFormSubmit" class="btn btn-success">
+                <i class="fas fa-save me-1"></i> Save & Add
+            </button>
+        @endif
         @if(!empty($customer))
             <span id="addCustomerId" data-cust-id="{{ $customer->id }}" class="btn btn-secondary">
                 <i class="fas fa-plus me-1"></i> Add
@@ -159,10 +173,11 @@
                         if (data.code == 200) {
                              $('#editModal').modal('hide');
                             toastr.success(data.message);
-                            @if (!isset($isPOS) && !$isPOS)
-                                setTimeout(() => {
-                                    window.location.reload();
-                                }, 1000);
+                            @if (isset($isPOS) && !$isPOS)
+                                // setTimeout(() => {
+                                //     window.location.reload();
+                                // }, 1000);
+                                initCustomersTable();
                             @else
                                 // Hide Select2 section
                                 $('#creditorSelectionSection').hide();

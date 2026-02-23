@@ -69,10 +69,13 @@ class CreditorInvoiceController extends Controller
                     ',
                 ];
             });
-            $grandPieces = $invoices->sum('total_pieces');
-            $grandWage = $invoices->sum('total_wage');
-            $grandAmount = $invoices->sum('total_amount');
-            $grandTotal = $invoices->sum('grand_total');
+            
+            $activeInvoices = $invoices->whereNull('deleted_at');
+
+            $grandPieces = $activeInvoices->sum('total_pieces');
+            $grandWage   = $activeInvoices->sum('total_wage');
+            $grandAmount = $activeInvoices->sum('total_amount');
+            $grandTotal  = $activeInvoices->sum('grand_total');
 
             return response()->json([
                 'data' => $data,

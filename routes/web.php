@@ -76,6 +76,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
                 // Customer save (Add / Edit)
                 Route::post('save', [CustomerController::class, 'save'])->name('save')->middleware('permission:customers,can_edit');
 
+                // Delete
+                Route::any('delete/{id}', [CustomerController::class, 'destroy'])->name('delete')->middleware('permission:customers,can_edit');
+
+                // restore
+                Route::post('/{id}/restore', [CustomerController::class, 'restore'])->name('restore');
+
                 Route::any('/view', [CustomerController::class, 'view'])->name('view')->middleware('permission:customers,can_view');
 
                 Route::get('/creditors', [CustomerController::class, 'creditors'])->name('creditors');

@@ -5,6 +5,9 @@
     <button type="button" class="btn btn-info btn-sm viewCustomer" data-id="{{ $row->id }}">
         <i class="fa fa-eye"></i>
     </button>
+    <a href="{{ url('admin/customers/delete/'). '/' .$row->id }}" onclick="return confirm('Delete Customer')" class="btn btn-sm btn-danger">
+        <i class="fa fa-trash"></i>
+    </a>
     <!-- <a href="{{ url('admin/customers/'.$row->id.'/docs' ) }}" class="btn btn-warning btn-sm">
         <i class="fa fa-file-arrow-up"></i>
     </a> -->
