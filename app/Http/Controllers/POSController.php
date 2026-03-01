@@ -71,13 +71,13 @@ class POSController extends Controller
             CreditorInvoiceItem::where('creditor_invoice_id', $creditorInvoice->id)->delete();
 
             $debtorInvoiceIds = DebtorInvoice::where([
-                'creditor_id' => $creditor->id,
                 'invoice_date' => $today
             ])->pluck('id');
 
             // dd($debtorInvoiceIds);
 
-            DebtorInvoiceItem::whereIn('debtor_invoice_id', $debtorInvoiceIds)->delete();
+            DebtorInvoiceItem::whereIn('debtor_invoice_id', $debtorInvoiceIds)
+            ->where('creditor_id', $creditor->id)->delete();
 
             /* 🔄 Reset totals */
             $creditorInvoice->update([
@@ -115,13 +115,15 @@ class POSController extends Controller
                     $debtorInvoice = DebtorInvoice::firstOrCreate(
                         [
                             'debtor_customer_id' => $debtor->id,
+                            // 'creditor_id' => $creditor->id,
                             'invoice_date' => $today
                         ],
                         [
+                            'creditor_id' => $creditor->id,
                             'total_amount' => 0,
                             'total_wage' => 0,
                             'grand_total' => 0,
-                            'additional_charges' => 0
+                            // 'additional_charges' => 0
                         ]
                     );
                     $debtorInvoice->creditor_id = $creditor->id;
@@ -146,7 +148,7 @@ class POSController extends Controller
 
                     DebtorInvoiceItem::create([
                         'debtor_invoice_id' => $debtorInvoice->id,
-                        // 'creditor_id' => $creditor->id,
+                        'creditor_id' => $creditor->id,
                         'product_name' => $row['product'],
                         'pieces' => $pieces,
                         'weight' => $row['weight'],
@@ -192,6 +194,7 @@ class POSController extends Controller
                 
             /* Invoice summary */
             $invoiceData['summary'] = [
+                'creditor_id' => $creditor->id,
                 'creditor_name' => $creditor->name,
                 'invoice_date'  => $today,
                 'total_amount'  => $creditorTotal,
@@ -448,18 +451,20 @@ class POSController extends Controller
             CreditorInvoiceItem::where('creditor_invoice_id', $creditorInvoice->id)->delete();
 
             $debtorInvoiceIds = DebtorInvoice::where([
-                'creditor_id' => $creditorInvoice->creditor->id,
                 'invoice_date' => $creditorInvoice->invoice_date
             ])->pluck('id');
 
             // dd($debtorInvoiceIds);
 
-            DebtorInvoiceItem::whereIn('debtor_invoice_id', $debtorInvoiceIds)->delete();
+            DebtorInvoiceItem::whereIn('debtor_invoice_id', $debtorInvoiceIds)
+                ->where('creditor_id', $creditorInvoice->creditor->id)
+                ->delete();
 
-            $debtorInvoices = DebtorInvoice::where([
-                'creditor_id' => $creditorInvoice->creditor->id,
-                'invoice_date' => $creditorInvoice->invoice_date
-            ])->delete();
+            // DebtorInvoice::where('creditor_id', $creditorInvoice->creditor->id)
+            //     ->where('invoice_date', $creditorInvoice->invoice_date)
+            //     ->update([
+            //         'deleted_at' => now()
+            //     ]);
 
             $creditorInvoice->delete();
         }

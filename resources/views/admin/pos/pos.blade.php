@@ -497,7 +497,7 @@
             valueField: 'id',
             labelField: 'name',
             searchField: 'name',
-            create: true,
+            // create: true,
             persist: false,
             maxItems: 1,
             dropdownParent: 'body',

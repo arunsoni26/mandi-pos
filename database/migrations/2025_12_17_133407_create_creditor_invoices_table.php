@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('creditor_id')
                 ->constrained('customers')
                 ->cascadeOnDelete();
-            $table->date('invoice_date')->unique();
+            $table->date('invoice_date');
             $table->decimal('total_amount', 12, 2)->default(0);
             $table->decimal('total_wage', 12, 2)->default(0);
             $table->decimal('grand_total', 12, 2)->default(0);
@@ -25,10 +25,10 @@ return new class extends Migration
             $table->foreignId('updated_by')->default(1)->constrained('users')->cascadeOnDelete();
             $table->softDeletes();
             $table->timestamps();
-            $table->unique(columns: [
-                'creditor_id',
-                'invoice_date'
-            ]);
+            // $table->unique(columns: [
+            //     'creditor_id',
+            //     'invoice_date'
+            // ]);
         });
     }
 

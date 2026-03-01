@@ -21,7 +21,7 @@ class CustomerController extends Controller
     public function list(Request $request)
     {
         $query = Customer::withTrashed()
-            ->where('customer_type', 'Active Creditor');
+            ->whereNot('customer_type', 'Raw Creditor');
 
         // Filters
         if ($request->status !== null && $request->status !== '') {
@@ -35,6 +35,7 @@ class CustomerController extends Controller
             $isDeleted = $row->trashed();
             return [
                 'name' => $row->name,
+                'customer_type' => ($row->customer_type == "Active Creditor")? "Active Creditor (व्यापारी)" : $row->customer_type,
                 'mobile' => $row->mobile,
                 'pan' => $row->pan,
                 'address' => $row->address,
@@ -80,7 +81,7 @@ class CustomerController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             // 'email' => 'nullable|email|max:255|unique:users,email,' . $request->user_id,
-            'mobile' => 'required|numeric|digits_between:10,15',
+            // 'mobile' => 'required|numeric|digits_between:10,15',
             'pan' => 'nullable',
             'address' => 'nullable',
             // 'password' => $request->id ? 'nullable|min:6|confirmed' : 'required|min:6|confirmed',

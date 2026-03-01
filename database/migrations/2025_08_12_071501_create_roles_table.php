@@ -37,7 +37,7 @@ return new class extends Migration
             [
                 'id' => 1,
                 'name' => 'Super Admin',
-                'email' => 'superadmin@dksahu.co.in',
+                'email' => 'superadmin@mandipos.in',
                 'email_verified_at' => now(),
                 'password' => bcrypt(12345678),
                 'role_id' => 1,

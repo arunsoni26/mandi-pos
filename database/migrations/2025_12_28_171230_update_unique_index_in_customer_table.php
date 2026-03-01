@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('customers', function (Blueprint $table) {
-            $table->unique(columns: [
-                'name',
-                'customer_type'
-            ]);
+            // $table->unique(columns: [
+            //     'name',
+            //     'customer_type'
+            // ]);
         });
     }
 
@@ -25,7 +25,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('customers', function (Blueprint $table) {
-            $table->dropUnique(['name', 'customer_type']);
+            // $table->dropUnique(['name', 'customer_type']);
         });
     }
 };

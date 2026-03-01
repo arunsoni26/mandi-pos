@@ -67,7 +67,8 @@ margin-top:20px;
 			padding: 9px 20px !important;
 		}
 		.receipt-main th {
-			padding: 13px 20px !important;
+			padding: 1px !important;
+			text-align: center !important;
 		}
 		.receipt-main td {
 			font-size: 13px;
@@ -103,12 +104,10 @@ margin-top:20px;
 <div class="col-md-12">   
  <div class="row">
 		
-        <div class="receipt-main col-xs-10 col-sm-10 col-md-6 col-xs-offset-1 col-sm-offset-1 col-md-offset-3">
+        <div class="receipt-main col-xs-10 col-sm-10 col-md-4 col-xs-offset-1 col-sm-offset-1 col-md-offset-3">
             <div class="row">
     			<div class="receipt-header">
-					<div class="col-xs-6 col-sm-6 col-md-6">
-					</div>
-					<div class="col-xs-6 col-sm-6 col-md-6 text-right">
+					<div class="col-xs-12 col-sm-12 col-md-12 text-center">
 						<div class="receipt-right">
 							<h5>Maa Karma Traders</h5>
 							<p>Ayush Sahu | 📞 6261451385, Ashok Sahu | 📞9826137177<i class="fa fa-phone"></i></p>

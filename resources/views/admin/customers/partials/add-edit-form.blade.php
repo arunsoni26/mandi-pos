@@ -9,19 +9,38 @@
 
 <form id="customerForm" novalidate="" enctype="multipart/form-data" >
     @csrf
+    @php
+        $selectCustomer = false;
+    @endphp
     @if(!empty($customer))
         <input type="hidden" name="id" value="{{ $customer->id }}">
     @endif
     @if(!empty($customerType))
         <input type="hidden" name="customer_type" value="{{ $customerType }}">
-    @elseif (!isset($isPOS) && !$isPOS)
-        <input type="hidden" name="customer_type" value="Active Creditor">
+    @elseif (isset($isPOS) && !$isPOS)
+        @php
+            $selectCustomer = true;
+        @endphp
     @endif
 
     <div class="modal-body">
         <div class="row g-3">
-            @if (!isset($isPOS) && !$isPOS)
-                🏪 Active Customer (व्यापारी)
+            
+            @if ($selectCustomer)
+                {{-- CustomerType --}}
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <label class="form-label">Customer Type</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        <select name="customer_type" class="form-select">
+                            <option value="">Select Customer Type</option>
+                            <option value="Active Creditor" @if (isset($customer) && $customer->customer_type == "Active Creditor") selected @endif>Active Creditor</option>
+                            <option value="Debitor" @if (isset($customer) && $customer->customer_type == "Debitor") selected @endif>Debitor</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4"></div>
             @endif
             
             {{-- Name --}}

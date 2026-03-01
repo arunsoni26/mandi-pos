@@ -29,10 +29,10 @@ return new class extends Migration
             $table->softDeletes();
             $table->timestamps();
 
-            $table->unique([
-                'debtor_customer_id',
-                'invoice_date'
-            ], 'debtor_day_unique');
+            // $table->unique([
+            //     'debtor_customer_id',
+            //     'invoice_date'
+            // ], 'debtor_day_unique');
         });
     }
 

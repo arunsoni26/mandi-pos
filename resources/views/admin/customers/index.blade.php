@@ -38,6 +38,7 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Name</th>
+                                    <th>Customer Type</th>
                                     <th>Mobile</th>
                                     <th>PAN</th>
                                     <th>Address</th>
@@ -102,6 +103,7 @@
                 },
                 columns: [
                     { data: 'name' },
+                    { data: 'customer_type' },
                     { data: 'mobile' },
                     { data: 'pan' },
                     { data: 'address' },
