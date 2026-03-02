@@ -15,11 +15,11 @@ margin-top:20px;
 		}
 		.receipt-main {
 			background: #ffffff none repeat scroll 0 0;
-			border-bottom: 12px solid #333333;
+			/* border-bottom: 12px solid #333333;
 			border-top: 12px solid #9f181c;
-			margin-top: 50px;
+			margin-top: 50px; */
 			margin-bottom: 50px;
-			padding: 40px 30px !important;
+			padding: 15px 30px !important;
 			position: relative;
 			box-shadow: 0 1px 21px #acacac;
 			color: #333333;
