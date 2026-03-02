@@ -193,7 +193,7 @@ margin-top:20px;
             <div>
                 <table class="table table-bordered">
                 <tr>
-                    <th class="text-end">Total Amount</th>
+                    <td class="text-end">Total Amount</td>
                     <td class="text-end" id="invWage">₹{{ number_format($invoiceSubTotal, 2) }}</td>
                 </tr>
 				@php
