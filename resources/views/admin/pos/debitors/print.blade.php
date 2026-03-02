@@ -201,23 +201,23 @@ margin-top:20px;
 					$grandTotal = $invoiceSubTotal + ( $percentageCharge );
 				@endphp
                 <tr>
-                    <th class="text-end">Percentage ({{ number_format($invoice->inv_percentage, 1) }}%)</th>
+                    <td class="text-end">Percentage ({{ number_format($invoice->inv_percentage, 1) }}%)</td>
                     <td class="text-end" id="invWage"> {{ $percentageCharge }} </td>
                 </tr>
                 <tr class="table-light">
-                    <th class="text-end fs-5">Grand Total</th>
+                    <td class="text-end fs-5">Grand Total</td>
                     <td class="text-end fs-5 fw-bold" id="invCartGT">₹{{ number_format($grandTotal, 2) }}</td>
                 </tr>
                 <tr class="table-light">
-                    <th class="text-end fs-5" style="color: white;">_</th>
+                    <td class="text-end fs-5" style="color: white;">_</td>
                     <td class="text-end fs-5 fw-bold"></td>
                 </tr>
                 <tr class="table-light">
-                    <th class="text-end fs-5" style="color: white;">_</th>
+                    <td class="text-end fs-5" style="color: white;">_</td>
                     <td class="text-end fs-5 fw-bold"></td>
                 </tr>
                 <tr class="table-light">
-                    <th class="text-end fs-5" style="color: white;">_</th>
+                    <td class="text-end fs-5" style="color: white;">_</td>
                     <td class="text-end fs-5 fw-bold"></td>
                 </tr>
             </table>
