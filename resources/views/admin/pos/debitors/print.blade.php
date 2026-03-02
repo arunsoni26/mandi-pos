@@ -36,13 +36,13 @@ margin-top:20px;
 			margin: 0 !important;
 		}
 		.receipt-main::after {
-			background: #414143 none repeat scroll 0 0;
+			/* background: #414143 none repeat scroll 0 0;
 			content: "";
 			height: 5px;
 			left: 0;
 			position: absolute;
 			right: 0;
-			top: -13px;
+			top: -13px; */
 		}
 		.receipt-main thead {
 			background: #414143 none repeat scroll 0 0;
@@ -64,7 +64,8 @@ margin-top:20px;
 			width: 18px;
 		}
 		.receipt-main td {
-			padding: 9px 20px !important;
+			padding: 1px !important;
+    		text-align: center !important;
 		}
 		.receipt-main th {
 			padding: 1px !important;
@@ -208,15 +209,15 @@ margin-top:20px;
                     <td class="text-end fs-5 fw-bold" id="invCartGT">₹{{ number_format($grandTotal, 2) }}</td>
                 </tr>
                 <tr class="table-light">
-                    <th class="text-end fs-5"></th>
+                    <th class="text-end fs-5" style="color: white;">_</th>
                     <td class="text-end fs-5 fw-bold"></td>
                 </tr>
                 <tr class="table-light">
-                    <th class="text-end fs-5"></th>
+                    <th class="text-end fs-5" style="color: white;">_</th>
                     <td class="text-end fs-5 fw-bold"></td>
                 </tr>
                 <tr class="table-light">
-                    <th class="text-end fs-5"></th>
+                    <th class="text-end fs-5" style="color: white;">_</th>
                     <td class="text-end fs-5 fw-bold"></td>
                 </tr>
             </table>
