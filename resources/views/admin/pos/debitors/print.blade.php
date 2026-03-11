@@ -111,7 +111,7 @@ margin-top:20px;
 		}
 
 		.ganesh-top img{
-			width: 10%;
+			width: 60px;
 		}
 
 		.header-brand{
@@ -157,7 +157,7 @@ margin-top:20px;
  <div class="row">
 		
         @php
-			$chunks = $invoice->items->chunk(12);
+			$chunks = $invoice->items->chunk(10);
 
 			$totalPieces = 0;
 			$totalWeight = 0;
@@ -177,6 +177,7 @@ margin-top:20px;
 							<div class="header-brand">
 								<img src="{{ asset('img/mkt-logo.png') }}" alt="MKT Logo">
 								<h5>Maa Karma Traders</h5>
+								<img src="{{ asset('img/mkt-logo.png') }}" alt="MKT Logo">
 							</div>
 
 							<div class="receipt-right">
@@ -190,8 +191,10 @@ margin-top:20px;
 				<div class="row">
 					<div class="receipt-header receipt-header-mid">
 						<div class="col-xs-8 text-left">
-							<h5>{{ $invoice->debitor->name }}</h5>
-							<p><b>Mobile :</b> {{ $invoice->debitor->mobile ?? 'N/A' }}</p>
+							<div class="receipt-right">
+								<h5><b>{{ $invoice->debitor->name }}</b></h5>
+								<p><b>Mobile :</b> {{ $invoice->debitor->mobile ?? 'N/A' }}</p>
+							</div>
 						</div>
 
 						<div class="col-xs-4 text-right">
@@ -278,6 +281,18 @@ margin-top:20px;
 						<tr>
 							<td><b>Grand Total</b></td>
 							<td><b>₹{{ number_format($grandTotal, 2) }}</b></td>
+						</tr>
+						<tr class="table-light">
+							<td class="text-end fs-5" style="color: white;">_</td>
+							<td class="text-end fs-5 fw-bold"></td>
+						</tr>
+						<tr class="table-light">
+							<td class="text-end fs-5" style="color: white;">_</td>
+							<td class="text-end fs-5 fw-bold"></td>
+						</tr>
+						<tr class="table-light">
+							<td class="text-end fs-5" style="color: white;">_</td>
+							<td class="text-end fs-5 fw-bold"></td>
 						</tr>
 
 					</table>

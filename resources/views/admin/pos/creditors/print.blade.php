@@ -106,12 +106,12 @@ margin-top:20px;
 		}
 
 		.ganesh-top{
-			text-align: center;
-			margin-bottom: 10px;
+			text-align:center;
+			margin-bottom:10px;
 		}
 
 		.ganesh-top img{
-			width: 10%;
+			width:60px;
 		}
 
 		.header-brand{
@@ -157,7 +157,7 @@ margin-top:20px;
  <div class="row">
 		
         @php
-			$chunks = $invoice->items->chunk(12);
+			$chunks = $invoice->items->chunk(10);
 
 			$totalPieces = 0;
 			$totalWeight = 0;
@@ -177,6 +177,7 @@ margin-top:20px;
 							<div class="header-brand">
 								<img src="{{ asset('img/mkt-logo.png') }}" alt="MKT Logo">
 								<h5>Maa Karma Traders</h5>
+								<img src="{{ asset('img/mkt-logo.png') }}" alt="MKT Logo">
 							</div>
 
 							<div class="receipt-right">
@@ -191,7 +192,7 @@ margin-top:20px;
 					<div class="receipt-header receipt-header-mid">
 						<div class="col-xs-8 col-sm-8 col-md-8 text-left">
 							<div class="receipt-right">
-								<h5>{{ $invoice->creditor->name }} </h5>
+								<h5><b>{{ $invoice->creditor->name }} </b></h5>
 								<p><b>Mobile :</b> {{ $invoice->creditor->mobile ?? 'N/A' }}</p>
 							</div>
 						</div>
@@ -259,20 +260,21 @@ margin-top:20px;
 					@endphp
 
 					<table class="table table-bordered">
-
 						<tr>
-							<td>Total Amount</td>
-							<td>₹{{ number_format($subTotal, 2) }}</td>
+							<td class="text-end">Total Amount</td>
+							<td class="text-end" id="invWage">₹{{ number_format($invoice->total_amount, 2) }}</td>
 						</tr>
-
 						<tr>
-							<td>Percentage ({{ number_format($invoice->inv_percentage, 1) }}%)</td>
-							<td>{{ number_format($percentageCharge, 2) }}</td>
+							<td class="text-end">Total Wage</td>
+							<td class="text-end" id="invWage">₹{{ number_format($invoice->total_wage, 2) }}</td>
 						</tr>
-
 						<tr>
-							<td><b>Grand Total</b></td>
-							<td><b>₹{{ number_format($grandTotal, 2) }}</b></td>
+							<td class="text-end">Additional Charges</td>
+							<td class="text-end" id="invWage">₹{{ number_format($invoice->additional_charges, 2) }}</td>
+						</tr>
+						<tr class="table-light">
+							<td class="text-end fs-5">Grand Total</td>
+							<td class="text-end fs-5 fw-bold" id="invCartGT">₹{{ number_format($invoice->grand_total, 2) }}</td>
 						</tr>
 
 					</table>

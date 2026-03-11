@@ -57,6 +57,7 @@ class CreditorInvoiceController extends Controller
                     'pieces'        => '<span '.$rowStyle.'>' . ($row->total_pieces ?? 0) . '</span>',
                     'wages'        => '<span '.$rowStyle.'>' . number_format($row->total_wage ?? 0, 2) . '</span>',
                     'amount'        => '<span '.$rowStyle.'>' . number_format($row->total_amount ?? 0, 2) . '</span>',
+                    'additional_charges'        => '<span '.$rowStyle.'>' . number_format($row->additional_charges ?? 0, 2) . '</span>',
                     'total'        => '<span '.$rowStyle.'>' . number_format($row->grand_total ?? 0, 2) . '</span>',
                     'status'        => $statusBadge,
                     'actions'       => '
@@ -75,6 +76,7 @@ class CreditorInvoiceController extends Controller
             $grandPieces = $activeInvoices->sum('total_pieces');
             $grandWage   = $activeInvoices->sum('total_wage');
             $grandAmount = $activeInvoices->sum('total_amount');
+            $grandAdditionalCharges = $activeInvoices->sum('additional_charges');
             $grandTotal  = $activeInvoices->sum('grand_total');
 
             return response()->json([
@@ -83,6 +85,7 @@ class CreditorInvoiceController extends Controller
                     'pieces' => $grandPieces,
                     'wages' => number_format($grandWage, 2),
                     'amount' => number_format($grandAmount, 2),
+                    'additional_charges' => number_format($grandAdditionalCharges, 2),
                     'grandTotal' => number_format($grandTotal, 2),
                 ]
             ]);

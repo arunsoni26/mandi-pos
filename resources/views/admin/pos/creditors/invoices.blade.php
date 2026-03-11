@@ -38,6 +38,7 @@
                                         <th width="40%">Peice</th>
                                         <th width="40%">Wage</th>
                                         <th width="40%">Price</th>
+                                        <th width="40%">Additional Charges</th>
                                         <th width="40%">Total</th>
                                         <th width="40%">Status</th>
                                         <th width="20%">Action</th>
@@ -51,6 +52,7 @@
                                     <th id="totalPieces" class="fw-bold text-primary"></th>
                                     <th id="totalWage" class="fw-bold text-primary"></th>
                                     <th id="totalAmount" class="fw-bold text-primary"></th>
+                                    <th id="totalAdditionalCharges" class="fw-bold text-primary"></th>
                                     <th id="grandTotal" class="fw-bold text-primary"></th>
                                     <th colspan="2"></th>
                                 </tr>
@@ -115,6 +117,7 @@
                         $('#totalPieces').html(json.grandTotals.pieces);
                         $('#totalWage').html(json.grandTotals.wages);
                         $('#totalAmount').html(json.grandTotals.amount);
+                        $('#totalAdditionalCharges').html(json.grandTotals.additional_charges);
                         $('#grandTotal').html(json.grandTotals.grandTotal);
 
                         return json.data; // important
@@ -127,6 +130,7 @@
                     { data: 'pieces' },
                     { data: 'wages' },
                     { data: 'amount' },
+                    { data: 'additional_charges' },
                     { data: 'total' },
                     { data: 'status' },
                     { data: 'actions', orderable: false, searchable: false }
