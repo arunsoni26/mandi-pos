@@ -222,7 +222,7 @@ margin-top:20px;
 						<tbody>
 							@foreach($items as $i => $item)
 								<tr>
-									<td>{{ ($pageIndex * 12) + $i + 1 }}</td>
+									<td>{{ ($pageIndex * 10) + $i + 1 }}</td>
 									<td>{{ $item->product_name ?? 'N/A'}}</td>
 									<td>{{ $item->pieces ?? 'N/A'}}</td>
 									<td>{{ $item->weight ?? 'N/A'}}</td>
