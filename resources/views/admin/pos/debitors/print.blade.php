@@ -229,7 +229,7 @@ margin-top:20px;
 							@endphp
 
 							<tr>
-								<td>{{ ($pageIndex * 10) + $i + 1 }}</td>
+								<td>{{ $i + 1 }}</td>
 								<td>{{ $item->product_name }}</td>
 								<td>{{ $item->pieces }}</td>
 								<td>{{ $item->weight }}</td>
