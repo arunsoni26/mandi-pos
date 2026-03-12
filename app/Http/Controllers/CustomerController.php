@@ -173,11 +173,15 @@ class CustomerController extends Controller
 
     public function creditors(Request $request)
     {
-        // dd($request->all());
-        $creditors = Customer::where('customer_type', $request->type)
-            ->where('name', 'like', "%{$request->searchTerm}%")
-            ->limit(20)
-            ->get();
+        $query = Customer::where('customer_type', $request->type)
+            ->where('name', 'like', "%{$request->searchTerm}%");
+
+        // If Raw Creditors → only today's data
+        if ($request->type == 'Raw Creditor') {
+            $query->whereDate('created_at', today());
+        }
+
+        $creditors = $query->limit(20)->get();
 
         return response()->json([
             'code' => 200,
