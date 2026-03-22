@@ -294,6 +294,14 @@ margin-top:20px;
 							<td class="text-end fs-5" style="color: white;">_</td>
 							<td class="text-end fs-5 fw-bold"></td>
 						</tr>
+						<tr class="table-light">
+							<td class="text-end fs-5" style="color: white;">_</td>
+							<td class="text-end fs-5 fw-bold"></td>
+						</tr>
+						<tr class="table-light">
+							<td class="text-end fs-5" style="color: white;">_</td>
+							<td class="text-end fs-5 fw-bold"></td>
+						</tr>
 
 					</table>
 
