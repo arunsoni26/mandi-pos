@@ -102,9 +102,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
             Route::get('/creditors/invoices', [CreditorInvoiceController::class, 'index'])->name('creditors.invoices');
             Route::get('/creditors/invoices/{invoice}/print', [CreditorInvoiceController::class, 'print'])->name('creditors.invoices.print');
-
+            Route::get('/creditors/invoices/export', [CreditorInvoiceController::class, 'export'])->name('creditors.invoices.export');
+            
             Route::get('/debitors/invoices', [DebtorInvoiceController::class, 'index'])->name('debitors.invoices');
             Route::get('/debitors/invoices/{invoice}/print', [DebtorInvoiceController::class, 'print'])->name('debitors.invoices.print');
+            Route::get('/debitors/invoices/export', [DebtorInvoiceController::class, 'export'])->name('debitors.invoices.export');
             
             Route::post('/debitors/invoices/update-percentage',
                 [DebtorInvoiceController::class, 'updatePercentage']

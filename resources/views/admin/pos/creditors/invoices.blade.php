@@ -15,15 +15,14 @@
                 <div class="card-body">
                     <!-- Filters Row -->
                     <div class="row g-3 mb-3">
-                        <form method="GET">
-                            <input
-                                type="date"
-                                name="date"
-                                value="{{ $date }}"
-                                class="form-control"
-                                onchange="this.form.submit()"
-                            >
+                        <form method="GET" class="col-md-10">
+                            <input type="date" name="date" value="{{ $date }}" class="form-control" onchange="this.form.submit()">
                         </form>
+                        <div class="col-md-2">
+                            <a href="{{ route('admin.pos.creditors.invoices.export', ['date' => $date]) }}" class="btn btn-success w-100">
+                                Download CSV
+                            </a>
+                        </div>
                     </div>
 
                     <!-- Table -->

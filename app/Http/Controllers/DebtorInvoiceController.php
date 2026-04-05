@@ -101,6 +101,100 @@ class DebtorInvoiceController extends Controller
         return view('admin.pos.debitors.invoices', compact('date'));
     }
 
+    public function export(Request $request)
+    {
+        $date = $request->date ?? now()->toDateString();
+
+        $query = DebtorInvoice::with('debitor')
+            ->withSum('items as total_pieces', 'pieces')
+            ->withSum('items as total_weight', 'weight')
+            ->withSum('items as total_amount', 'total')
+            ->whereDate('invoice_date', $date);
+
+        if ($request->status !== null && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        $invoices = $query->get();
+
+        $fileName = "debtor_invoices_{$date}.csv";
+
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+        ];
+
+        $callback = function () use ($invoices, $date) {
+            $handle = fopen('php://output', 'w');
+            $formattedDate = \Carbon\Carbon::parse($date)->format('d M Y');
+
+            // ✅ Top header row
+            fputcsv($handle, ["Debtor Invoice - {$formattedDate}"]);
+
+            // Optional: empty row for spacing
+            fputcsv($handle, []);
+
+            // ✅ Column headings
+            fputcsv($handle, [
+                'Invoice',
+                'Date',
+                'Debitor Name',
+                'Pieces',
+                'Amount',
+                'Percentage (%)',
+                'Percentage Charge',
+                'Total'
+            ]);
+
+            $grandPieces = 0;
+            $totalAmount = 0;
+            $totalPercentageCharge = 0;
+
+            foreach ($invoices as $row) {
+
+                $itemsAmount = $row->total_amount ?? 0;
+                $percentage = $row->inv_percentage ?? 0;
+
+                $percentageCharge = ($itemsAmount * $percentage) / 100;
+                $total = $itemsAmount + $percentageCharge;
+
+                // ✅ Write row
+                fputcsv($handle, [
+                    str_replace('INV', 'INVD', invoiceNumber($row)),
+                    \Carbon\Carbon::parse($row->invoice_date)->format('d M Y'),
+                    $row->debitor->name ?? '-',
+                    $row->total_pieces ?? 0,
+                    number_format($itemsAmount, 2),
+                    $percentage,
+                    number_format($percentageCharge, 2),
+                    number_format($total, 2),
+                ]);
+
+                // ✅ Totals
+                $grandPieces += $row->total_pieces ?? 0;
+                $totalAmount += $itemsAmount;
+                $totalPercentageCharge += $percentageCharge;
+            }
+
+            // ✅ Footer row
+            fputcsv($handle, []); // empty line
+            fputcsv($handle, [
+                'TOTAL',
+                '',
+                '',
+                $grandPieces,
+                number_format($totalAmount, 2),
+                '',
+                number_format($totalPercentageCharge, 2),
+                number_format($totalAmount + $totalPercentageCharge, 2),
+            ]);
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     public function print(DebtorInvoice $invoice)
     {
         $invoice->load([

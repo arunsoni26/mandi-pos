@@ -94,6 +94,93 @@ class CreditorInvoiceController extends Controller
         return view('admin.pos.creditors.invoices', compact('date'));
     }
 
+    public function export(Request $request)
+    {
+        $date = $request->date ?? now()->toDateString();
+
+        $query = CreditorInvoice::with('creditor')
+            // ->withTrashed()
+            ->withSum('items as total_pieces', 'pieces')
+            ->withSum('items as total_weight', 'weight')
+            ->withSum('items as total_amount', 'total')
+            ->whereDate('invoice_date', $date);
+
+        if ($request->status !== null && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        $invoices = $query->get();
+
+        $fileName = "creditor_invoices_{$date}.csv";
+
+        $headers = [
+            "Content-Type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+        ];
+
+        $callback = function () use ($invoices, $date) {
+            $file = fopen('php://output', 'w');
+            // Title row (same number of columns)
+            fputcsv($file, [
+                'Creditor Invoice - ' . \Carbon\Carbon::parse(time: $date)->format('d M Y'),
+                '', '', '', '', '', '', '', ''
+            ]);
+
+            // Empty row
+            fputcsv($file, []);
+
+            // 🔹 Header Row
+            fputcsv($file, [
+                'Invoice No',
+                'Date',
+                'Creditor',
+                'Pieces',
+                'Wages',
+                'Amount',
+                'Additional Charges',
+                'Total',
+                'Status'
+            ]);
+
+            foreach ($invoices as $row) {
+                $isDeleted = !is_null($row->deleted_at);
+
+                fputcsv($file, [
+                    str_replace('INV', 'INVC', invoiceNumber($row)),
+                    \Carbon\Carbon::parse($row->invoice_date)->format('d M Y'),
+                    $row->creditor->name ?? '-',
+                    $row->total_pieces ?? 0,
+                    number_format($row->total_wage ?? 0, 2),
+                    number_format($row->total_amount ?? 0, 2),
+                    number_format($row->additional_charges ?? 0, 2),
+                    number_format($row->grand_total ?? 0, 2),
+                    $isDeleted ? 'Cancelled' : 'Active',
+                ]);
+            }
+
+            // 🔹 Grand Totals (only active invoices)
+            $activeInvoices = $invoices->whereNull('deleted_at');
+
+            fputcsv($file, []); // empty row
+
+            fputcsv($file, [
+                'TOTAL',
+                '',
+                '',
+                $activeInvoices->sum('total_pieces'),
+                number_format($activeInvoices->sum('total_wage'), 2),
+                number_format($activeInvoices->sum('total_amount'), 2),
+                number_format($activeInvoices->sum('additional_charges'), 2),
+                number_format($activeInvoices->sum('grand_total'), 2),
+                ''
+            ]);
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     public function print(CreditorInvoice $invoice)
     {
         $invoice->load([

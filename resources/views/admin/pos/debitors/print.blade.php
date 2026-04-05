@@ -53,7 +53,7 @@ margin-top:20px;
 		.receipt-right h5 {
 			font-size: 16px;
 			font-weight: bold;
-			margin: 0 0 7px 0;
+			margin: 5px 0;
 		}
 		.receipt-right p {
 			font-size: 12px;
@@ -157,7 +157,7 @@ margin-top:20px;
  <div class="row">
 		
         @php
-			$chunks = $invoice->items->chunk(10);
+			$chunks = $invoice->items->chunk(15);
 
 			$totalPieces = 0;
 			$totalWeight = 0;
@@ -258,6 +258,13 @@ margin-top:20px;
 				</table>
 
 				<!-- TOTAL SECTION ONLY LAST PAGE -->
+				@if(!$loop->last)
+					<div class="row">
+						<div class="col-xs-12 text-left">
+							<p><b>Date :</b> {{ \Carbon\Carbon::parse($invoice->invoice_date)->format('d-m-Y') }}</p>
+						</div>
+					</div>
+				@endif
 
 				@if($loop->last)
 
@@ -270,7 +277,7 @@ margin-top:20px;
 
 						<tr>
 							<td>Total Amount</td>
-							<td>₹{{ number_format($subTotal, 2) }}</td>
+							<td>{{ number_format($subTotal, 2) }}</td>
 						</tr>
 
 						<tr>
@@ -279,8 +286,8 @@ margin-top:20px;
 						</tr>
 
 						<tr>
-							<td><b>Grand Total</b></td>
-							<td><b>₹{{ number_format($grandTotal, 2) }}</b></td>
+							<td><h4 style="margin: 0px;"><b>Grand Total</b></h4></td>
+							<td><h4 style="margin: 0px;"><b>{{ number_format($grandTotal, 2) }}</b></h4></td>
 						</tr>
 						<tr class="table-light">
 							<td class="text-end fs-5" style="color: white;">_</td>
