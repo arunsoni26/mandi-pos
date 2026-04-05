@@ -82,6 +82,11 @@
             table = $('#customersTable').DataTable({
                 processing: true,
                 serverSide: false,
+                lengthMenu: [
+                    [10, 25, 50, 100, 200, 500],
+                    [10, 25, 50, 100, 200, 500]
+                ],
+                pageLength: 200,
                 ajax: {
                     url: "{{ route('admin.pos.creditors.invoices') }}",
                     data: function(d) {
