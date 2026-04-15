@@ -41,4 +41,9 @@ class DebtorInvoice extends Model
     {
         return $this->belongsTo(Customer::class, 'creditor_id');
     }
+    
+    public function downloads()
+    {
+        return $this->morphMany(InvoiceDownload::class, 'invoice');
+    }
 }

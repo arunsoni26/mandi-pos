@@ -62,7 +62,7 @@ class UserController extends Controller
     }
 
     public function form(Request $request) {
-        $roles = Role::where('status', '1')->get();
+        $roles = Role::whereNot('id', 1)->where('status', '1')->get();
         $user = $request->userId ? User::findOrFail($request->userId) : null;
         return view('admin.users.add-edit-form', compact('user', 'roles'));
     }

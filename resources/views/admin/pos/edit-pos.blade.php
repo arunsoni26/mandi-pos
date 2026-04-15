@@ -38,19 +38,6 @@
                         <input type="date" name="invoice_date" id="invoiceDate" class="form-control" value="{{ \Carbon\Carbon::parse($invoice->invoice_date)->format('Y-m-d') }}" readonly>
                         <input type="hidden" name="actual_invoice_date" id="actualInvoiceDate" value="{{ \Carbon\Carbon::parse($invoice->invoice_date)->format('Y-m-d') }}">
                     </div>
-                    <div class="col-md-4">
-                        <select id="customerTypeSelect" class="form-control">
-                            <option value="Active Creditor" @if($invoice->creditor->customer_type == 'Active Creditor') selected @endif>Active Creditor (व्यापारी)</option>
-                            <option value="Raw Creditor" @if($invoice->creditor->customer_type == 'Raw Creditor') selected @endif>Raw Creditor (किसान)</option>
-                        </select>
-                        <span class="fs-6 text-danger"><i class="fa fa-info-circle"></i>This will change actual creditor which is attached with the invoice</span>
-                    </div>
-                </div>
-                <div class="row mb-3" id="creditorSelectionSection">
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">Select Creditor</label>
-                        <select name="creditor_id" id="creditorSelect" class="form-control"></select>
-                    </div>
                 </div>
                 <div class="row mb-3" id="creditorSelectedSection">
                 </div>
@@ -336,9 +323,6 @@
             <div class="col-md-4">
                 <div class="alert alert-success d-flex justify-content-between align-items-center">
                     <strong>${customer.name}</strong>
-                    <button type="button" class="btn btn-sm btn-danger" id="removeCreditor">
-                        Remove
-                    </button>
                 </div>
                 <input type="hidden" name="creditor_id" id="selectedCreditorId" value="${customer.id}">
             </div>
@@ -723,7 +707,14 @@
         row.setAttribute('data-row-id', id);
 
         row.innerHTML = `
-            <td><input class="form-control cart-product" data-id="${id}" value="${c.product || ''}"></td>
+            <td>
+                <select class="form-control cart-product" data-id="${id}">
+                    <option value="">Select Product</option>
+                    <option value="Aalu" ${c.product === 'Aalu' ? 'selected' : ''}>Aalu</option>
+                    <option value="Pyaj" ${c.product === 'Pyaj' ? 'selected' : ''}>Pyaj</option>
+                    <option value="Lehsun" ${c.product === 'Lehsun' ? 'selected' : ''}>Lehsun</option>
+                </select>
+            </td>
             <td><input type="number" class="form-control cart-pieces" data-id="${id}" value="${c.pieces || ''}"></td>
             <td><input type="number" class="form-control cart-weight" data-id="${id}" value="${c.weight || ''}"></td>
             <td><input type="number" class="form-control cart-rate" data-id="${id}" value="${c.rate || ''}"></td>
@@ -878,12 +869,15 @@
             toastr.error("Please select the creditor");
         }
         if ($('#selectedCreditorId').val() !== '' && mainGrandTotal > 0 && Object.keys(cart).length != 0) {
+
+            let updateUrl = "{{ route('admin.pos.update', ':invoice') }}";
+            updateUrl = updateUrl.replace(':invoice', $('#invoiceId').val());
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 type: "post",
-                url: "{{route('admin.pos.update')}}",
+                url: updateUrl,
                 data: {
                     cart: cart,
                     invoiceId: $('#invoiceId').val(),

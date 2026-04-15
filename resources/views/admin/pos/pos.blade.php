@@ -98,11 +98,9 @@
                     </div>
 
                     <div class="d-flex gap-2">
-                        @if (in_array(auth()->user()->role_id, [1,2]))
-                            <span id="saveGenerateInvoiceBtn" class="btn btn-success flex-fill disabled">
-                                Save & Generate Invoice
-                            </span>
-                        @endif
+                        <span id="saveGenerateInvoiceBtn" class="btn btn-success flex-fill disabled">
+                            Save & Generate Invoice
+                        </span>
                         <span id="saveNextBtn" class="btn btn-primary flex-fill disabled">
                             Save
                         </span>
@@ -386,7 +384,7 @@
                 processResults: data => {
                     let results = data.creditors.map(c => ({
                         id: c.id,
-                        text: c.name,        // PLAIN TEXT
+                        text: c.name,
                         customer: c
                     }));
 
@@ -677,14 +675,10 @@
 
         mainGrandTotal = grandTotal;
 
-        @if (in_array(auth()->user()->role_id, [1,2]))
-            $('#saveGenerateInvoiceBtn').addClass('disabled');
-        @endif
+        $('#saveGenerateInvoiceBtn').addClass('disabled');
         $('#saveNextBtn').addClass('disabled');
         if (mainGrandTotal > 0) {
-            @if (in_array(auth()->user()->role_id, [1,2]))
-                $('#saveGenerateInvoiceBtn').removeClass('disabled');
-            @endif
+            $('#saveGenerateInvoiceBtn').removeClass('disabled');
             $('#saveNextBtn').removeClass('disabled');
         }
         return grandTotal;
@@ -846,16 +840,14 @@
     }
 
     var generateInvoice = false;
-    
-    @if (in_array(auth()->user()->role_id, [1,2]))
-        // Save & Generate Invoice
-        document.getElementById('saveGenerateInvoiceBtn').addEventListener('click', (e) => {
-            e.preventDefault();
 
-            generateInvoice = true;
-            saveInvoice();
-        });
-    @endif
+    // Save & Generate Invoice
+    document.getElementById('saveGenerateInvoiceBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+
+        generateInvoice = true;
+        saveInvoice();
+    });
 
     // Save Invoice
     document.getElementById('saveNextBtn').addEventListener('click', (e) => {

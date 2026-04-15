@@ -63,6 +63,30 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="historyModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Download History</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Date & Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTable">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('custom-scripts')
@@ -90,7 +114,7 @@
                 ajax: {
                     url: "{{ route('admin.pos.debitors.invoices') }}",
                     data: function(d) {
-                        d.date = $('input[name="date"]').val(); // ✅ SEND DATE
+                        d.date = $('input[name="date"]').val();
                         d.status = $('#filterStatus').val();
                     },
                     error: function (xhr, error, thrown) {
@@ -244,6 +268,42 @@
                 alert('Failed to update percentage');
             }
         });
+    });
+</script>
+
+
+<script>
+    $(document).on('click', '.view-history', function () {
+
+        let history = $(this).data('history');
+        let table = '';
+
+        if (history.length === 0) {
+            table = '<tr><td colspan="2">No downloads yet</td></tr>';
+        } else {
+            history.forEach(function(item) {
+                let date = new Date(item.downloaded_at);
+
+                let formattedDate = date.toLocaleString('en-IN', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                });
+
+                table += `
+                    <tr>
+                        <td>${item.user?.name ?? 'Unknown'}</td>
+                        <td>${formattedDate}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        $('#historyTable').html(table);
+        $('#historyModal').modal('show');
     });
 </script>
 

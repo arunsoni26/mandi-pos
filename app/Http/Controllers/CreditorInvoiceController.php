@@ -13,7 +13,10 @@ class CreditorInvoiceController extends Controller
 
         if ($request->ajax()) {
 
-            $query = CreditorInvoice::with('creditor')
+            $query = CreditorInvoice::with([
+                    'creditor',
+                    'downloads.user'
+                ])
                 ->withTrashed()
                 ->withSum('items as total_pieces', 'pieces')
                 ->withSum('items as total_weight', 'weight')
@@ -50,6 +53,22 @@ class CreditorInvoiceController extends Controller
                         </a>
                     ';
 
+                $historyBtn = '
+                        <button 
+                            class="btn btn-sm btn-info view-history"
+                            data-id="'.$row->id.'"
+                            data-history=\''.json_encode($row->downloads).'\'
+                        >
+                            <i class="bi bi-clock-history"></i> '.$row->downloads->count().'
+                        </button>
+                    ';
+
+                if(!in_array(auth()->user()->role_id, [1,2])) {
+                    $historyBtn = '';
+                    $cancelBtn = '';
+                }
+                
+
                 return [
                     'invoice'       => '<span '.$rowStyle.'>' . str_replace('INV', 'INVC', invoiceNumber($row)) . '</span>',
                     'invoice_date'  => '<span '.$rowStyle.'>' . \Carbon\Carbon::parse($row->invoice_date)->format('d M Y') . '</span>',
@@ -66,6 +85,7 @@ class CreditorInvoiceController extends Controller
                         class="btn btn-sm btn-secondary">
                             Print
                         </a>
+                        ' . $historyBtn . '
                         ' . $cancelBtn . '
                     ',
                 ];
@@ -183,6 +203,29 @@ class CreditorInvoiceController extends Controller
 
     public function print(CreditorInvoice $invoice)
     {
+        $user = auth()->user();
+
+        // ✅ Check if employee already downloaded
+        if ($user->role_id == 3) {
+
+            $alreadyDownloaded = $invoice->downloads()
+                ->where('user_id', $user->id)
+                ->exists();
+
+            if ($alreadyDownloaded) {
+                return '<script>
+                    alert("You can only download this invoice once.");
+                    window.close();
+                </script>';
+            }
+        }
+
+        // ✅ Save download history (for ALL roles)
+        $invoice->downloads()->create([
+            'user_id' => $user->id,
+            'downloaded_at' => now(),
+        ]);
+
         $invoice->load([
             'creditor',
             'items.debtorCustomer'

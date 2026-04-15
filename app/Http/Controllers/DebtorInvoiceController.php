@@ -13,7 +13,10 @@ class DebtorInvoiceController extends Controller
 
         if ($request->ajax()) {
 
-            $query = DebtorInvoice::with('debitor')
+            $query = DebtorInvoice::with([
+                    'debitor',
+                    'downloads.user'
+                ])
                 ->withSum('items as total_pieces', 'pieces')
                 ->withSum('items as total_weight', 'weight')
                 ->withSum('items as total_amount', 'total')
@@ -45,6 +48,19 @@ class DebtorInvoiceController extends Controller
                 // ✅ Calculate percentage charge FROM invoice table percentage
                 $percentageCharge = ($itemsAmount * $invPercentage) / 100;
                 $footer['percentage_charge_sum'] += $percentageCharge;
+
+                $historyBtn = '
+                        <button 
+                            class="btn btn-sm btn-info view-history"
+                            data-history=\''.json_encode($row->downloads).'\'
+                        >
+                            <i class="bi bi-clock-history"></i> '.$row->downloads->count().'
+                        </button>
+                    ';
+
+                if(!in_array(auth()->user()->role_id, [1,2])) {
+                    $historyBtn = '';
+                }
 
                 return [
                     'invoice'           => str_replace('INV', 'INVD', invoiceNumber($row)),
@@ -79,6 +95,7 @@ class DebtorInvoiceController extends Controller
                         <a href="' . route('admin.pos.debitors.invoices.print', $row->id) . '" target="_blank" class="btn btn-sm btn-secondary">
                             Print
                         </a>
+                        '.$historyBtn.'
                         '
                 ];
             });
@@ -197,6 +214,29 @@ class DebtorInvoiceController extends Controller
 
     public function print(DebtorInvoice $invoice)
     {
+        $user = auth()->user();
+
+        // ✅ Check if employee already downloaded
+        if ($user->role_id == 3) {
+
+            $alreadyDownloaded = $invoice->downloads()
+                ->where('user_id', $user->id)
+                ->exists();
+
+            if ($alreadyDownloaded) {
+                return '<script>
+                    alert("You can only download this invoice once.");
+                    window.close();
+                </script>';
+            }
+        }
+
+        // ✅ Save download history (for ALL roles)
+        $invoice->downloads()->create([
+            'user_id' => $user->id,
+            'downloaded_at' => now(),
+        ]);
+
         $invoice->load([
             'debitor'
         ]);

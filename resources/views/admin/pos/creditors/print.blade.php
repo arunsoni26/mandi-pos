@@ -63,6 +63,19 @@ margin-top:20px;
 			text-align: center;
 			width: 18px;
 		}
+		.receipt-left h5 {
+			font-size: 16px;
+			font-weight: bold;
+			margin: 5px 0;
+		}
+		.receipt-left p {
+			font-size: 12px;
+			margin: 0px;
+		}
+		.receipt-left p i {
+			text-align: center;
+			width: 18px;
+		}
 		.receipt-main td {
 			padding: 1px !important;
     		text-align: center !important;
@@ -157,7 +170,7 @@ margin-top:20px;
  <div class="row">
 		
         @php
-			$chunks = $invoice->items->chunk(15);
+			$chunks = $invoice->items->chunk(13);
 
 			$totalPieces = 0;
 			$totalWeight = 0;
@@ -198,7 +211,8 @@ margin-top:20px;
 						</div>
 						<div class="col-xs-4 col-sm-4 col-md-4">
 							<div class="receipt-left" style="float:right;">
-								<h3>{{ str_replace('INV', 'INVC', invoiceNumber($invoice)) }}</h3>
+								<p><b>Date :</b> {{ \Carbon\Carbon::parse($invoice->invoice_date)->format('d-m-Y') }}</p>
+								<h5><b>{{ str_replace('INV', 'INVC', invoiceNumber($invoice)) }}</b></h5>
 							</div>
 						</div>
 					</div>
@@ -251,13 +265,6 @@ margin-top:20px;
 						@endif
 					</table>
 				</div>
-				@if(!$loop->last)
-					<div class="row">
-						<div class="col-xs-12 text-left">
-							<p><b>Date :</b> {{ \Carbon\Carbon::parse($invoice->invoice_date)->format('d-m-Y') }}</p>
-						</div>
-					</div>
-				@endif
 
 				@if($loop->last)
 
@@ -287,11 +294,7 @@ margin-top:20px;
 					</table>
 
 					<div class="row">
-						<div class="col-xs-6">
-							<p><b>Date :</b> {{ \Carbon\Carbon::parse($invoice->invoice_date)->format('d-m-Y') }}</p>
-						</div>
-
-						<div class="col-xs-6 text-right">
+						<div class="col-xs-12 text-right">
 							<h4>Signature</h4>
 						</div>
 					</div>
