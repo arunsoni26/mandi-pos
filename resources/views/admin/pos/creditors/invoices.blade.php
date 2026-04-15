@@ -42,7 +42,7 @@
                                         <th width="40%">Additional Charges</th>
                                         <th width="40%">Total</th>
                                         <th width="40%">Status</th>
-                                        <th width="20%">Action</th>
+                                        <th width="40%">Action</th>
                                     </tr>
                                 </tr>
                             </thead>

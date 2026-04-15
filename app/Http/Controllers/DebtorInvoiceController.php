@@ -51,10 +51,11 @@ class DebtorInvoiceController extends Controller
 
                 $historyBtn = '
                         <button 
-                            class="btn btn-sm btn-info view-history"
+                            class="btn btn-sm btn-info view-history d-flex align-items-center flex-nowrap"
+                            data-id="'.$row->id.'"
                             data-history=\''.json_encode($row->downloads).'\'
                         >
-                            <i class="bi bi-clock-history"></i> '.$row->downloads->count().'
+                            <i class="bi bi-clock-history me-1"></i> <span>'.$row->downloads->count().'</span>
                         </button>
                     ';
 
@@ -92,11 +93,13 @@ class DebtorInvoiceController extends Controller
                     'perc_charge'       => number_format($percentageCharge ?? 0, 2),
                     'total'      => number_format(($row->total_amount + $percentageCharge) ?? 0, 2),
                     'actions'           => '
-                        <a href="' . route('admin.pos.debitors.invoices.print', $row->id) . '" target="_blank" class="btn btn-sm btn-secondary">
-                            Print
-                        </a>
-                        '.$historyBtn.'
-                        '
+                        <div class="d-flex align-items-center flex-nowrap">
+                            <a href="' . route('admin.pos.debitors.invoices.print', $row->id) . '" target="_blank" class="btn btn-sm btn-success">
+                                <i class="bi bi-printer"></i>
+                            </a>
+                            '.$historyBtn.'
+                        </div>
+                    '
                 ];
             });
             $grandPieces = $invoices->sum('total_pieces');

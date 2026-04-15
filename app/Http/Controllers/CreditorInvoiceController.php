@@ -49,21 +49,30 @@ class CreditorInvoiceController extends Controller
                         <a href="' . url('admin/pos/invoice/delete') . '/' . $row->id . '"
                         class="btn btn-sm btn-danger"
                         onclick="return confirm(' . $deleteMsg . ')">
-                            Cancel
+                            <i class="bi bi-x-circle"></i>
                         </a>
                     ';
 
                 $historyBtn = '
                         <button 
-                            class="btn btn-sm btn-info view-history"
+                            class="btn btn-sm btn-info view-history d-flex align-items-center flex-nowrap"
                             data-id="'.$row->id.'"
                             data-history=\''.json_encode($row->downloads).'\'
                         >
-                            <i class="bi bi-clock-history"></i> '.$row->downloads->count().'
+                            <i class="bi bi-clock-history me-1"></i> <span>'.$row->downloads->count().'</span>
                         </button>
                     ';
 
+                $updateBtn = $isDeleted
+                    ? ''
+                    : '
+                        <a href="' . url('admin/pos/edit-pos') . '/' . $row->id . '"
+                        class="btn btn-sm btn-secondary">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                    ';
                 if(!in_array(auth()->user()->role_id, [1,2])) {
+                    $updateBtn = '';
                     $historyBtn = '';
                     $cancelBtn = '';
                 }
@@ -80,13 +89,16 @@ class CreditorInvoiceController extends Controller
                     'total'        => '<span '.$rowStyle.'>' . number_format($row->grand_total ?? 0, 2) . '</span>',
                     'status'        => $statusBadge,
                     'actions'       => '
-                        <a href="' . route('admin.pos.creditors.invoices.print', $row->id) . '"
-                        target="_blank"
-                        class="btn btn-sm btn-secondary">
-                            Print
-                        </a>
-                        ' . $historyBtn . '
-                        ' . $cancelBtn . '
+                        <div class="d-flex align-items-center flex-nowrap">
+                            <a href="' . route('admin.pos.creditors.invoices.print', $row->id) . '"
+                            target="_blank"
+                            class="btn btn-sm btn-success">
+                                <i class="bi bi-printer"></i>
+                            </a>
+                            ' . $updateBtn . '
+                            ' . $historyBtn . '
+                            ' . $cancelBtn . '
+                        </div>
                     ',
                 ];
             });
