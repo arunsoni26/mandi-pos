@@ -32,6 +32,7 @@
                     <thead class="table-light">
                         <tr>
                             <th>Creditor Name</th>
+                            <th>Creditor Type</th>
                             <th>Total Pieces</th>
                             <th>Total Invoice Amount</th>
                         </tr>
@@ -39,7 +40,7 @@
 
                     <tfoot class="table-light">
                         <tr>
-                            <th>Grand Total</th>
+                            <th colspan="2">Grand Total</th>
                             <th id="footerPieces"></th>
                             <th id="footerAmount"></th>
                         </tr>
@@ -65,6 +66,11 @@ $(document).ready(function() {
     let table = $('#creditorReportTable').DataTable({
         processing: true,
         serverSide: false,
+        lengthMenu: [
+            [10, 25, 50, 100, 200, 500],
+            [10, 25, 50, 100, 200, 500]
+        ],
+        pageLength: 200,
         ajax: {
             url: "{{ route('admin.reports.creditor-wise') }}",
             data: function(d) {
@@ -78,6 +84,7 @@ $(document).ready(function() {
         },
         columns: [
             { data: 'creditor_name' },
+            { data: 'customer_type' },
             { data: 'total_pieces' },
             { data: 'total_invoice_amount' }
         ]

@@ -63,6 +63,11 @@ $(document).ready(function() {
 
     let table = $('#debtorReportTable').DataTable({
         processing: true,
+        lengthMenu: [
+            [10, 25, 50, 100, 200, 500],
+            [10, 25, 50, 100, 200, 500]
+        ],
+        pageLength: 200,
         ajax: {
             url: "{{ route('admin.reports.debtor-wise') }}",
             data: function(d) {

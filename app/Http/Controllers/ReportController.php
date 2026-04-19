@@ -28,6 +28,7 @@ class ReportController extends Controller
             ->select(
                 'ci.creditor_id',
                 'c.name as creditor_name',
+                'c.customer_type as customer_type',
                 DB::raw('SUM(cii.pieces) as total_pieces'),
                 DB::raw('SUM(cii.total) as total_invoice_amount')
             )
