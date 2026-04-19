@@ -47,7 +47,7 @@
             </div>
             
 
-            @if(!isset($user) && empty($user->email))
+            @if(isset($user) && !empty($user->email))
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Password</label>
                     <div class="input-group">

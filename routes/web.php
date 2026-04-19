@@ -8,6 +8,7 @@ use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\GstYearController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RolePermissionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
@@ -112,6 +113,20 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
                 [DebtorInvoiceController::class, 'updatePercentage']
             )->name('debitors.invoices.update-percentage');
         
+        });
+
+        Route::group(['prefix' => 'reports', 'as' => 'reports.'], function () {
+            Route::get('/creditor-wise', [ReportController::class, 'creditorWiseReport'])
+                ->name('creditor-wise')->middleware('permission:reports,can_view');
+
+            Route::get('/creditor-wise/export', [ReportController::class, 'exportCreditorWise'])
+                ->name('creditor-wise.export')->middleware('permission:reports,can_view');
+
+            Route::get('/debtor-wise', [ReportController::class, 'debtorWiseReport'])
+                ->name('debtor-wise')->middleware('permission:reports,can_view');
+
+            Route::get('/debtor-wise/export', [ReportController::class, 'exportDebtorWise'])
+                ->name('debtor-wise.export')->middleware('permission:reports,can_view');
         });
         
         Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity.logs');

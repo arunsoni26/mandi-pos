@@ -89,6 +89,46 @@
                     </li>
                 @endif
 
+                {{-- Report Section --}}
+                @if(canDo('reports','can_view_nav'))
+                    <li class="pc-item pc-caption">
+                        <label>Reports</label>
+                        <i class="ti ti-report"></i>
+                    </li>
+
+                    <li class="pc-item pc-hasmenu 
+                        {{ request()->routeIs('admin.reports.*') ? 'active pc-trigger' : '' }}">
+                        
+                        <a href="javascript:void(0);" class="pc-link">
+                            <span class="pc-micon">
+                                <i class="fas fa-chart-line"></i>
+                            </span>
+                            <span class="pc-mtext">Reports</span>
+                            <span class="pc-arrow">
+                                <i data-feather="chevron-right"></i>
+                            </span>
+                        </a>
+
+                        <ul class="pc-submenu">
+
+                            {{-- Creditor Wise Report --}}
+                            <li class="pc-item {{ request()->routeIs('admin.reports.creditor-wise') ? 'active' : '' }}">
+                                <a class="pc-link" href="{{ route('admin.reports.creditor-wise') }}">
+                                    <span class="pc-mtext">Creditor Wise</span>
+                                </a>
+                            </li>
+
+                            {{-- Debtor Wise Report --}}
+                            <li class="pc-item {{ request()->routeIs('admin.reports.debtor-wise') ? 'active' : '' }}">
+                                <a class="pc-link" href="{{ route('admin.reports.debtor-wise') }}">
+                                    <span class="pc-mtext">Debtor Wise</span>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                @endif
+
             </ul>
             <!-- <div class="pc-navbar-card bg-primary rounded">
                 <h4 class="text-white">Explore full code</h4>
